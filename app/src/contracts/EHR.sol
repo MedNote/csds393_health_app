@@ -1,6 +1,8 @@
 pragma solidity >=0.7.0 <0.9.0;
 
-contract EHR{
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+
+contract EHR {
 
     /// test data
     address admin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
@@ -39,7 +41,13 @@ contract EHR{
     mapping (address => address) patientProviders;
     /// associate patient's wallet address with MedicalRecord
     mapping (address => MedicalRecord) records;
-    
+
+    event PatientCreation(address indexed _patient, address indexed _doctor);
+    event DoctorCreation(address indexed _doctor);
+    event DoctorAuth(address indexed _patient, address indexed _doctor, bool isAuthorized, address[] authorized);
+    event MedicalRecordView(address indexed _patient, address indexed _viewer);
+    event MedicalRecordUpdate(address indexed _patient, address indexed _updator, bytes32 fileHash);
+
 
     constructor() {                 
          require(msg.sender == admin);
@@ -63,6 +71,7 @@ contract EHR{
         records[_patientAddress].doctorAddress = msg.sender;
         /// hash of null data
         records[_patientAddress].hash = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+        emit PatientCreation(_patientAddress, msg.sender);
     }
 
     function createDoctor(
@@ -79,6 +88,7 @@ contract EHR{
         doctors[_doctorAddress].lastName = _lastName;
         doctors[_doctorAddress].pubKey = _doctorPublicKey;
         doctors[_doctorAddress].valid = true;
+        emit DoctorCreation(_doctorAddress);
     }
 
     function authorizeDoctor(address _doctorAddress) public
@@ -88,6 +98,7 @@ contract EHR{
                 && patients[msg.sender].valid
                 && contains(patients[msg.sender].authorized, _doctorAddress) == -1);
         patients[msg.sender].authorized.push(_doctorAddress);
+        emit DoctorAuth(msg.sender, _doctorAddress, true, patients[msg.sender].authorized);
     }
 
     function deauthorizeDoctor(address _doctorAddress) public
@@ -99,6 +110,12 @@ contract EHR{
                 && idx != -1);
         patients[msg.sender].authorized[uint(idx)] = patients[msg.sender].authorized[patients[msg.sender].authorized.length-1];
         patients[msg.sender].authorized.pop();
+        emit DoctorAuth(msg.sender, _doctorAddress, false, patients[msg.sender].authorized);
+    }
+
+    function updateRecordHash(address _patientAddress) public {
+        require(patients[_patientAddress].valid);
+        patients[_patientAddress]
     }
 
     /// Check if address is in list
