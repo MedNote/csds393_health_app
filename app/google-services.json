@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "289095680582",
+    "project_id": "mednote-1647220019746",
+    "storage_bucket": "mednote-1647220019746.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289095680582:android:4b1fcf2b503c61ea4d4047",
+        "android_client_info": {
+          "package_name": "com.mednote.cwru"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289095680582-o9ed7729vpjcmi0tq7hqng9sn5epfs4c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mednote.cwru",
+            "certificate_hash": "b42ba0a0c280251921369276768ad9beeabbfbc8"
+          }
+        },
+        {
+          "client_id": "289095680582-94v6a9l87s99dd8ivhvtfo4ign2jqjhn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA39bRH_Pl6p6NMkLiv7RFhX7qQQummv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289095680582-94v6a9l87s99dd8ivhvtfo4ign2jqjhn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

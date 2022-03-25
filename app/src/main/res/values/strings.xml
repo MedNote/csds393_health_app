@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MedNote</string>
+    <string name="previous">Previous</string>
+    <string name="file_manager_button_wearable">Share Wearable Data</string>
 </resources>
