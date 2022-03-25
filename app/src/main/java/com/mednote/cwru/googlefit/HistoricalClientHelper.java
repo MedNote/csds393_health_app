@@ -32,14 +32,12 @@ public class HistoricalClientHelper {
     private static final String TAG = "Google_Fit: ";
     private Context appContext;
     private GoogleSignInAccount googleSignInAccount;
-    private List<DataReadRequest> readRequests;
     private int MaxInContainer = 20000;
 
-    public HistoricalClientHelper(List<DataReadRequest> readRequests, GoogleSignInAccount googleSignInAccount) {
+    public HistoricalClientHelper(GoogleSignInAccount googleSignInAccount) {
         this.appContext = ApplicationContextHelper.get();
         this.googleSignInAccount = googleSignInAccount;
 //                GoogleSignIn.getAccountForExtension(this.appContext, fitnessOptions);
-        this.readRequests = readRequests;
     }
 
     public void setMaxInContainer(int maxInContainer) {
@@ -53,14 +51,6 @@ public class HistoricalClientHelper {
             optionsBuilder.addDataType(type, FitnessOptions.ACCESS_READ);
         }
         return optionsBuilder.build();
-    }
-
-    public void RequestGoogleFitData(OnSuccessListener<DataReadResponse> onSuccessListener) {
-
-        for (DataReadRequest readRequest : readRequests) {
-            Task<DataReadResponse> responseTask = InitiateDataReadRequest(readRequest, onSuccessListener);
-        }
-
     }
 
     public Task<DataReadResponse> InitiateDataReadRequest(DataReadRequest readRequest, OnSuccessListener<DataReadResponse> onSuccessListener) {
@@ -103,6 +93,8 @@ public class HistoricalClientHelper {
         GoogleFitDataContainer currentContainer = new GoogleFitDataContainer();
         List<GoogleFitDataContainer> googleFitDataContainers = new ArrayList<>();
         for (DataSet dataSet : dataSetList) {
+            // TODO: Logging for debug purposes
+            HistoricalClientLogger.LogDataSet(dataSet);
             for (DataPoint dp : dataSet.getDataPoints()) {
 //                    LogDataPoint(dp);
                 if (currentContainer.getDataPointList().size() < MaxInContainer) {

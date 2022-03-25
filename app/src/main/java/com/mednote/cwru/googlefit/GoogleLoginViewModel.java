@@ -31,6 +31,8 @@ public class GoogleLoginViewModel extends BaseViewModel {
     public GoogleLoginViewModel(Context context) {
         mainActivityContext = context;
         activityLauncher = BetterActivityResult.registerActivityForResult((ActivityResultCaller) mainActivityContext);
+        // Try signing in
+        googleLoggedIn = GoogleSignIn.getLastSignedInAccount(this.mainActivityContext) != null;
     }
 
     public GoogleSignInAccount getAccount() {
@@ -62,7 +64,7 @@ public class GoogleLoginViewModel extends BaseViewModel {
         // Build a GoogleSignInClient with the options specified by gso.
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this.mainActivityContext, gso);
 
-        if (!isSignedIn()) {
+        if (!getGoogleLoggedIn()) {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             activityLauncher.launch(signInIntent, result -> {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
@@ -88,6 +90,11 @@ public class GoogleLoginViewModel extends BaseViewModel {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         setGoogleLoggedIn(GoogleSignIn.getLastSignedInAccount(this.mainActivityContext) != null);
-        return getGoogleLoggedIn();
+        return getGoogleLoggedIn() != null;
+    }
+
+    @Override
+    protected void instantiatePermissions() {
+
     }
 }

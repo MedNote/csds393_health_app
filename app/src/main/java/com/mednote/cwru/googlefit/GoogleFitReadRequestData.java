@@ -1,9 +1,11 @@
 package com.mednote.cwru.googlefit;
 
 import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import androidx.databinding.ObservableBoolean;
 
 import com.google.android.gms.fitness.data.DataType;
+import com.mednote.cwru.BR;
 import com.mednote.cwru.util.helpers.TimeStampHelper;
 
 import java.io.File;
@@ -36,53 +38,69 @@ public class GoogleFitReadRequestData extends BaseObservable {
         this.sentToServer = new ObservableBoolean(clone.sentToServer);
     }
 
+    // region Binding Getters
+    @Bindable
     public DataType getDataType() {
         return dataType;
     }
 
+    @Bindable
     public long getEndTime() {
         return endTime;
     }
 
+    @Bindable
     public long getStartTime() {
         return startTime;
     }
 
+    @Bindable
     public File getFile() {
         return file;
     }
 
+    @Bindable
     public ObservableBoolean getResponseReceived() {
         return responseReceived;
     }
 
+    @Bindable
     public ObservableBoolean getSentToServer() {
         return sentToServer;
     }
+    // endregion
 
+    // region Binding Setters
     public void setDataType(DataType dataType) {
         this.dataType = dataType;
+        notifyPropertyChanged(BR.dataType);
     }
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+        notifyPropertyChanged(BR.endTime);
     }
 
     public void setStartTime(long startTime) {
         this.startTime = startTime;
+        notifyPropertyChanged(BR.startTime);
     }
 
     public void setFile(File file) {
         this.file = file;
+        notifyPropertyChanged(BR.file);
     }
 
     public void setResponseReceived(boolean responseReceived) {
         this.responseReceived.set(responseReceived);
+        notifyPropertyChanged(BR.responseReceived);
     }
 
     public void setSentToServer(boolean sentToServer) {
         this.sentToServer.set(sentToServer);
+        notifyPropertyChanged(BR.sentToServer);
     }
+    // endregion
 
     @Override
     public boolean equals(Object o) {

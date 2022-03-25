@@ -11,7 +11,6 @@ import androidx.databinding.Observable;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableList;
 import androidx.databinding.ObservableMap;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,6 +26,7 @@ import com.mednote.cwru.util.helpers.ExecutorServiceHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,8 +37,11 @@ public class WearableViewModel extends BaseViewModel {
     private GoogleFitReadRequestDataMap observableRequestMap;
     private GoogleFitReadRequestDataList observableRequestList;
     private ArrayList<String> observableRequestStringList;
+    // Map of data types and position on list
+    private Map<String, Integer> dataTypePosition;
 
-    private Boolean googleLoggedIn;
+
+    private Boolean wearableGoogleLoggedIn;
     private Boolean requestGoogleLogin;
     private Boolean permissionsGranted;
     private Boolean dataReceived;
@@ -46,7 +49,7 @@ public class WearableViewModel extends BaseViewModel {
 
     public WearableViewModel(Context context) {
         mainActivityContext = context;
-        googleLoggedIn = false;
+        wearableGoogleLoggedIn = false;
         requestGoogleLogin = false;
         permissionsGranted = false;
         dataReceived = false;
@@ -55,6 +58,10 @@ public class WearableViewModel extends BaseViewModel {
         observableRequestList = new GoogleFitReadRequestDataList();
         observableRequestMap = new GoogleFitReadRequestDataMap();
         observableRequestStringList = new ArrayList<>();
+        dataTypePosition = new HashMap<>();
+
+        // Instantiate parameters
+        checkGoogleFitPermission();
 
         // Subscribe to the changes in the observable Map and List
         observableRequestList.addOnListChangedCallback(observableRequestListListener);
@@ -66,8 +73,8 @@ public class WearableViewModel extends BaseViewModel {
 
     // region Binding Getters
     @Bindable
-    public Boolean getGoogleLoggedIn() {
-        return googleLoggedIn;
+    public Boolean getWearableGoogleLoggedIn() {
+        return wearableGoogleLoggedIn;
     }
 
     @Bindable
@@ -101,6 +108,11 @@ public class WearableViewModel extends BaseViewModel {
     }
 
     @Bindable
+    public Map<String, Integer> getDataTypePosition() {
+        return dataTypePosition;
+    }
+
+    @Bindable
     public Boolean getDataRetrievalInProcess() {
         return dataRetrievalInProcess;
     }
@@ -108,9 +120,9 @@ public class WearableViewModel extends BaseViewModel {
     // endregion
 
     // region Binding Setters
-    public void setGoogleLoggedIn(Boolean googleLoggedIn) {
-        this.googleLoggedIn = googleLoggedIn;
-        notifyPropertyChanged(BR.googleLoggedIn);
+    public void setWearableGoogleLoggedIn(Boolean wearableGoogleLoggedIn) {
+        this.wearableGoogleLoggedIn = wearableGoogleLoggedIn;
+        notifyPropertyChanged(BR.wearableGoogleLoggedIn);
     }
 
     public void setRequestGoogleLogin(Boolean requestGoogleLogin) {
@@ -143,6 +155,11 @@ public class WearableViewModel extends BaseViewModel {
         notifyPropertyChanged(BR.observableRequestStringList);
     }
 
+    public void setDataTypePosition(Map<String, Integer> dataTypePosition) {
+        this.dataTypePosition = dataTypePosition;
+        notifyPropertyChanged(BR.dataTypePosition);
+    }
+
     public void setDataRetrievalInProcess(Boolean dataRetrievalInProcess) {
         this.dataRetrievalInProcess = dataRetrievalInProcess;
         notifyPropertyChanged(BR.dataRetrievalInProcess);
@@ -150,103 +167,81 @@ public class WearableViewModel extends BaseViewModel {
 
     // endregion
 
-    synchronized private GoogleFitReadRequestDataMap putObservableRequestMap(GoogleFitReadRequestData gfRequestData) {
-        String stringType = WearableDataTypesHelper.getDataCodesMap().get(gfRequestData.getDataType());
-        ((Activity) mainActivityContext).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getObservableRequestMap().put(stringType, gfRequestData);
-            }
-        });
-        return getObservableRequestMap();
-    }
-
-    private void updateObservableRequestMapFromList(ObservableList<GoogleFitReadRequestData> sender, int positionStart, int itemCount) {
-        for (int i = positionStart; i < positionStart + itemCount; i++) {
-            updateObservableRequestMap(sender.get(i));
-        }
-    }
-
-    private void updateObservableRequestMap(GoogleFitReadRequestData gfRequestData) {
-        String stringType = WearableDataTypesHelper.getDataCodesMap().get(gfRequestData.getDataType());
-        if (getObservableRequestMap().containsKey(stringType)) {
-            GoogleFitReadRequestData prevGfRequestData = Objects.requireNonNull(getObservableRequestMap().get(stringType));
-            // General case when the sent status is the same
-            if (prevGfRequestData.getEndTime() < gfRequestData.getEndTime()
-                    && prevGfRequestData.getSentToServer().get()
-                    == gfRequestData.getSentToServer().get()) {
-                putObservableRequestMap(gfRequestData);
-            }
-            // If previous one was not sent to server
-            if (!prevGfRequestData.getSentToServer().get()
-                    && gfRequestData.getSentToServer().get()) {
-                putObservableRequestMap(gfRequestData);
-            }
-        } else {
-            putObservableRequestMap(gfRequestData);
-        }
-    }
-
     private GoogleSignInOptionsExtension getFitnessOptions() {
         return HistoricalClientHelper.getFitnessOptions();
     }
 
     public void requestWearableData() {
         // Set the status to inProgress
-        setDataRetrievalInProcess(true);
+        if (!getDataRetrievalInProcess()) {
+            setDataRetrievalInProcess(true);
+        }
         // This is to update sign in status
-        if (!getGoogleLoggedIn()) {
+        if (!getWearableGoogleLoggedIn()) {
             setRequestGoogleLogin(true);
             return;
         }
         // Update permissions status
-        checkGoogleFitPermission();
-        if (!permissionsGranted) {
+        if (!getPermissionsGranted()) {
             requestGoogleFitPermission();
             return;
         }
-        if (!dataReceived) {
+        if (!getDataReceived()) {
             parallelRequestData();
         }
     }
 
     private void parallelRequestData() {
         // TODO: better solution for google account
-        /*GoogleSignInAccount account = GoogleSignIn.getAccountForExtension(this.mainActivityContext, getFitnessOptions());
-
-        ArrayList<GoogleFitReadRequestData> requestDataArray = new ArrayList<>();
-        for (DataType type : WearableDataTypesHelper.getDataTypeList()) {
-            HistoricalClientRequestHelper historicalClientRequestHelper = new HistoricalClientRequestHelper(type)
-            requestDataArray.addAll(clientHelper.GetTimeBuckets(type));
-        }
+        GoogleSignInAccount account = GoogleSignIn.getAccountForExtension(this.mainActivityContext, getFitnessOptions());
         HistoricalClientHelper clientHelper = new HistoricalClientHelper(account);
 
-        for (GoogleFitReadRequestData gfRequestData : requestDataArray) {
-            MutableLiveData<GoogleFitReadRequestData> requestData = new MutableLiveData<>(gfRequestData);
-            liveReadRequestData.add(requestData); // TODO: can this crash the app under certain conditions?
+        for (DataType type : WearableDataTypesHelper.getDataTypeList()) {
+            // TODO: should time be dynamic?
+            long startTime = WearableRepository.getInstance().getStartTime(type);
+            long endTime = WearableRepository.getInstance().getEndTime();
+            HistoricalClientRequestHelper historicalClientRequestHelper = new HistoricalClientRequestHelper(type, startTime, endTime);
+            getObservableRequestList().addAll(historicalClientRequestHelper.GetTimeBuckets());
+        }
+
+        for (GoogleFitReadRequestData readRequestData : getObservableRequestList()) {
+            // Listen to changes in request properties
+            readRequestData.addOnPropertyChangedCallback(new OnPropertyChangedCallback() {
+                @Override
+                public void onPropertyChanged(Observable sender, int propertyId) {
+                    // TODO: fix the conditions
+//                    updateObservableRequestMap((GoogleFitReadRequestData) sender);
+                    putObservableRequestMap((GoogleFitReadRequestData) sender);
+                    // TODO: theres is a better way to determine the completion, but I am too lazy
+                    checkRequestStatus();
+                }
+            });
+            HistoricalClientRequestHelper historicalClientRequestHelper = new HistoricalClientRequestHelper(readRequestData);
+            DataReadRequest dataReadRequest = historicalClientRequestHelper.CreateDataReadRequest();
             OnSuccessListener<DataReadResponse> generalListener = response -> {
                 // TODO: what if Google fit is empty
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        File savedFile = clientHelper.ProcessDataSetList(response.getDataSets());
+                        List<GoogleFitDataContainer> googleFitDataContainers = clientHelper.ProcessDataSetList(response.getDataSets());
                         // Only if file is not null post response received
-                        if (savedFile != null) {
-                            GoogleFitReadRequestData newGfRequestData = new GoogleFitReadRequestData(gfRequestData);
-                            newGfRequestData.setFile(savedFile);
-                            newGfRequestData.setResponseReceived(true);
-                            requestData.postValue(newGfRequestData);
-                            updateObservableRequestMap(newGfRequestData);
-                            sendFileToServer("wearable", savedFile, newGfRequestData);
+                        // Update on UI thread
+                        if (googleFitDataContainers != null) {
+                            ((Activity) mainActivityContext).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    readRequestData.setResponseReceived(true);
+                                }
+                            });
+                            // TODO: save in DB and send to server
                         }
                         // TODO: post data empty
                     }
                 };
                 ExecutorServiceHelper.getInstance().execute(runnable);
             };
-            DataReadRequest dataReadRequest = clientHelper.CreateDataReadRequest(Objects.requireNonNull(requestData.getValue()));
             clientHelper.InitiateDataReadRequest(dataReadRequest, generalListener);
-        }*/
+        }
     }
 
     public void requestGoogleFitPermission() {
@@ -280,11 +275,75 @@ public class WearableViewModel extends BaseViewModel {
         boolean newDataProcessed = true;
         for (String key: observableRequestMap.keySet()) {
             GoogleFitReadRequestData gfRequestData = observableRequestMap.get(key);
-            newDataProcessed = newDataProcessed && gfRequestData.getSentToServer().get();
+            // TODO: update properties
+//            newDataProcessed = newDataProcessed && gfRequestData.getSentToServer().get();
+            newDataProcessed = newDataProcessed && gfRequestData.getResponseReceived().get();
         }
         if (newDataProcessed != dataReceived) {
             setDataReceived(newDataProcessed);
         }
+    }
+
+    synchronized private GoogleFitReadRequestDataMap putObservableRequestMap(GoogleFitReadRequestData gfRequestData) {
+        String stringType = WearableDataTypesHelper.getDataCodesMap().get(gfRequestData.getDataType());
+        getObservableRequestMap().put(stringType, gfRequestData);
+        return getObservableRequestMap();
+    }
+
+    private void updateObservableRequestMapFromList(ObservableList<GoogleFitReadRequestData> sender, int positionStart, int itemCount) {
+        for (int i = positionStart; i < positionStart + itemCount; i++) {
+            updateObservableRequestMap(sender.get(i));
+        }
+    }
+
+    private void updateObservableRequestMap(GoogleFitReadRequestData gfRequestData) {
+        String stringType = WearableDataTypesHelper.getDataCodesMap().get(gfRequestData.getDataType());
+        if (getObservableRequestMap().containsKey(stringType)) {
+            GoogleFitReadRequestData prevGfRequestData = Objects.requireNonNull(getObservableRequestMap().get(stringType));
+            // General case when the sent status is the same
+            if (prevGfRequestData.getEndTime() < gfRequestData.getEndTime()
+                    && prevGfRequestData.getSentToServer().get()
+                    == gfRequestData.getSentToServer().get()) {
+                putObservableRequestMap(gfRequestData);
+            }
+            // If previous one was not received
+            if (!prevGfRequestData.getResponseReceived().get()
+                    && gfRequestData.getResponseReceived().get()) {
+                putObservableRequestMap(gfRequestData);
+            }
+            // If previous one was not sent to server
+            if (!prevGfRequestData.getSentToServer().get()
+                    && gfRequestData.getSentToServer().get()) {
+                putObservableRequestMap(gfRequestData);
+            }
+        } else {
+            putObservableRequestMap(gfRequestData);
+        }
+    }
+
+    private void updateObservableStringList(ObservableMap<String, GoogleFitReadRequestData> sender, String key) {
+        Integer position = 0;
+        if (dataTypePosition.containsKey(key)) {
+            position = dataTypePosition.get(key);
+        } else {
+            position = dataTypePosition.size();
+            dataTypePosition.put(key, position);
+        }
+        if (position >= getObservableRequestStringList().size()){
+            getObservableRequestStringList().add(Objects.requireNonNull(sender.get(key)).toString());
+        } else {
+            getObservableRequestStringList().set(position, Objects.requireNonNull(sender.get(key)).toString());
+        }
+        notifyPropertyChanged(BR.observableRequestStringList);
+    }
+
+    private void updateObservableStringList(ObservableMap<String, GoogleFitReadRequestData> sender) {
+        ArrayList<String> inString = new ArrayList<>();
+        for (Map.Entry<String, GoogleFitReadRequestData> entry:
+                sender.entrySet()) {
+            inString.add(entry.getValue().toString());
+        }
+        setObservableRequestStringList(inString);
     }
 
     private ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>> observableRequestListListener = new ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>>() {
@@ -322,29 +381,31 @@ public class WearableViewModel extends BaseViewModel {
         @Override
         public void onMapChanged(ObservableMap<String, GoogleFitReadRequestData> sender, String key) {
             notifyPropertyChanged(BR.observableRequestMap);
-            // TODO: there are better ways to do this, but I am lazy
-            ArrayList<String> inString = new ArrayList<>();
-            for (Map.Entry<String, GoogleFitReadRequestData> entry:
-                 sender.entrySet()) {
-                inString.add(entry.getValue().toString());
-            }
-            setObservableRequestStringList(inString);
+            updateObservableStringList(sender, key);
         }
     };
 
     private Observable.OnPropertyChangedCallback selfCallback = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
-            if (propertyId == BR.googleLoggedIn) {
-                if (getDataRetrievalInProcess()) {
-                    requestWearableData();
-                }
+        if (propertyId == BR.wearableGoogleLoggedIn) {
+            if (getWearableGoogleLoggedIn() && getDataRetrievalInProcess()) {
+                requestWearableData();
             }
-            if (propertyId == BR.permissionsGranted) {
-                if (getDataRetrievalInProcess()) {
-                    requestWearableData();
-                }
+            if (getWearableGoogleLoggedIn()) {
+                setRequestGoogleLogin(false);
             }
+        }
+        if (getPermissionsGranted() && propertyId == BR.permissionsGranted) {
+            if (getPermissionsGranted() && getDataRetrievalInProcess()) {
+                requestWearableData();
+            }
+        }
+        if (propertyId == BR.dataReceived) {
+            if (getDataReceived()) {
+                setDataRetrievalInProcess(false);
+            }
+        }
         }
     };
 

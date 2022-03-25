@@ -26,6 +26,10 @@ public class HistoricalClientRequestHelper {
         );
     }
 
+    public DataReadRequest CreateDataReadRequest() {
+        return CreateDataReadRequest(type, startTime, endTime);
+    }
+
     public DataReadRequest CreateDataReadRequest(DataType type, long startTime, long endTime) {
 //        Log.i(TAG, "Range Start: " + TimeStampHelper.getTimestamp(startTime));
 //        Log.i(TAG, "Range End: " + TimeStampHelper.getTimestamp(endTime));

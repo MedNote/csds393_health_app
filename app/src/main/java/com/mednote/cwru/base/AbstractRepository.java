@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mednote.cwru.helpers.ApplicationContextHelper;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 
@@ -17,5 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractRepository<T> {
+
+    // TODO: create log for what has already been extracted
 
 }

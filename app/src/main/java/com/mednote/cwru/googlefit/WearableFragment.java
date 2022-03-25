@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.mednote.cwru.BR;
+import com.mednote.cwru.MainActivity;
 import com.mednote.cwru.R;
 import com.mednote.cwru.databinding.WearableFragmentBinding;
 
@@ -23,8 +24,7 @@ import java.util.ArrayList;
 
 public class WearableFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: put viewModel in activity
-    private WearableViewModel wearableViewModel;
+    private MainActivity mainActivity;
 
     // ListView stuff
     private ListView requestStatusList;
@@ -36,7 +36,15 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
     }
 
     public WearableViewModel getWearableViewModel() {
-        return wearableViewModel;
+        return getMainActivity().getWearableViewModel();
+    }
+
+    public GoogleLoginViewModel getGoogleLoginViewModel() {
+        return getMainActivity().getGoogleLoginViewModel();
+    }
+
+    public MainActivity getMainActivity() {
+        return mainActivity;
     }
 
     @Override
@@ -46,7 +54,9 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         // And binding
         WearableFragmentBinding binding =  DataBindingUtil.inflate(inflater, R.layout.wearable_fragment, container, false);
-        wearableViewModel = new WearableViewModel(getContext());
+        mainActivity = (MainActivity) getContext();
+        // Make sure every property is instantiated properly
+        getWearableViewModel().setWearableGoogleLoggedIn(getGoogleLoginViewModel().getGoogleLoggedIn());
         binding.setViewmodel(getWearableViewModel());
         View rootView = binding.getRoot();
 
@@ -62,12 +72,15 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.wearable_button_google_fit).setOnClickListener(this);
 
         // Instantiate ListView
+        requestProgressList.add("adfa");
         adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, requestProgressList);
+                android.R.layout.simple_list_item_1, android.R.id.text1, getWearableViewModel().getObservableRequestStringList());
         requestStatusList.setAdapter(adapter);
 
         // Track bindable objects
-        wearableViewModel.addOnPropertyChangedCallback(wearableCallback);
+        getWearableViewModel().addOnPropertyChangedCallback(onPropertyChangedCallback);
+        getGoogleLoginViewModel().addOnPropertyChangedCallback(onPropertyChangedCallback);
+
     }
 
     @Override
@@ -80,15 +93,20 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private Observable.OnPropertyChangedCallback wearableCallback = new Observable.OnPropertyChangedCallback() {
+    private Observable.OnPropertyChangedCallback onPropertyChangedCallback = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
             if (propertyId == BR.observableRequestStringList) {
-                requestProgressList = getWearableViewModel().getObservableRequestStringList();
+//                requestProgressList = getWearableViewModel().getObservableRequestStringList();
                 adapter.notifyDataSetChanged();
             }
             if (propertyId == BR.requestGoogleLogin) {
-
+                if (!getGoogleLoginViewModel().getGoogleLoggedIn()) {
+                    getGoogleLoginViewModel().googleSignIn();
+                }
+            }
+            if (propertyId == BR.googleLoggedIn) {
+                getWearableViewModel().setWearableGoogleLoggedIn(getGoogleLoginViewModel().getGoogleLoggedIn());
             }
         }
     };
