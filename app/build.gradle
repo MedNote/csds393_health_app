@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
     //web3js Ethereum plugin
-    implementation 'org.web3j:core:4.1.0-android'
+    implementation 'org.web3j:core:4.5.6'
 
 
 }
