@@ -4,11 +4,14 @@ import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.EthBlock;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ContractInteraction {
@@ -23,8 +26,14 @@ public class ContractInteraction {
         this.web3 = Utils.getWeb3(url);
         this.credentials = WalletUtils.loadCredentials(walletPassword, walletDir);
         this.contract = new EHR(contractAddress, web3, credentials, new DefaultGasProvider());
-
     }
+
+    /**
+     * Get the last transaction of the given type, from the given address.
+     * @param type One of "patientCreation", "doctorCreation",
+     * @return
+     */
+    //public TransactionReceipt getLastTransactionByType(String type, String fromAddress) { }
 
 
 
