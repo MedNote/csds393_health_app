@@ -5,7 +5,7 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\fedor\\.android\\debug.keystore')
+//            storeFile file('C:\\Users\\fedor\\.android\\debug.keystore')
             storePassword 'android'
             keyPassword 'android'
             keyAlias 'androiddebugkey'
