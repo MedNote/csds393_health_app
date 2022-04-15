@@ -46,11 +46,11 @@ type note {
 }
 
 type Mutation {
-  addRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  addRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 
-  updateRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  updateRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 
-  appendRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  appendRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 }
 
 input nameIn {
@@ -61,6 +61,13 @@ input nameIn {
 
 input immunizationIn {
   immunization: String
+
+  date: DateTime
+}
+
+
+input noteIn {
+  note: String
 
   date: DateTime
 }

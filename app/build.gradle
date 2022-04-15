@@ -97,4 +97,6 @@ dependencies {
 
 apollo {
     packageName.set("com.mednote.cwru")
+    generateKotlinModels = false
+//    customTypeMapping = ['JSONObject' :"org.json.JSONObject" ]
 }
