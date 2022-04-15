@@ -3,17 +3,21 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_intro.xml" value="0.36666666666666664" />
-        <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_login.xml" value="0.20520833333333333" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_user.xml" value="0.36666666666666664" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/content_main.xml" value="0.28306159420289856" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/user_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.28940217391304346" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/drawable/style_button_blue.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_intro.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_signup.xml" value="0.14666666666666667" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.16666666666666666" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
