@@ -93,12 +93,13 @@ public class LoginRepository {
 
     /**
      * Interprets the serverResult
-     * @param serverResult
      * @return
      */
     public LoggedInUser onLoginResult(LoginServerResponse loginServerResponse) {
         if (loginServerResponse.getUserExists()) {
             LoggedInUser newUser = new LoggedInUser(loginServerResponse.getAccountCredentials());
+            // TODO: get symmetric key
+            setLoggedInUser(newUser);
         }
         return user;
     }
