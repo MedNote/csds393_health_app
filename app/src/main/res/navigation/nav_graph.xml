@@ -3,10 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/wearableFragment">
+    app:startDestination="@id/userFragment">
 
     <fragment
         android:id="@+id/wearableFragment"
         android:name="com.mednote.cwru.googlefit.WearableFragment"
-        android:label="WearableFragment" />
+        android:label="WearableFragment" >
+        <action
+            android:id="@+id/action_wearableFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.mednote.cwru.UserFragment"
+        android:label="UserFragment" >
+        <action
+            android:id="@+id/action_userFragment_to_wearableFragment"
+            app:destination="@id/wearableFragment" />
+    </fragment>
 </navigation>
