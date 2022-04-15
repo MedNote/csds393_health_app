@@ -34,11 +34,6 @@ public class LogInActivity extends BaseActivity {
 
       ApolloCall<LaunchListQuery.Data> queryCall = client.query(new LaunchListQuery());
       Single<ApolloResponse<LaunchListQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
-      ApolloResponse<LaunchListQuery.Data> result;
-//      queryResponse.subscribe( s -> {
-//                  Log.d("minnie""asdf");
-//              }
-//              );
 
       queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<LaunchListQuery.Data>>() {
                                  @Override
@@ -52,9 +47,6 @@ public class LogInActivity extends BaseActivity {
                                  }
                               }
       );
-
-   //problema      c.query(new LaunchListQuery()).execute(new Com);
-
    }
 
 
