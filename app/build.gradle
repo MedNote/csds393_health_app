@@ -90,6 +90,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
     implementation("com.apollographql.apollo3:apollo-runtime:3.2.1")
+
+    implementation("com.apollographql.apollo3:apollo-rx2-support:3.2.1")
+
 }
 
 apollo {

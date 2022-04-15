@@ -1,14 +1,22 @@
 package com.mednote.cwru;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
+import com.apollographql.apollo3.ApolloCall;
+import com.apollographql.apollo3.api.ApolloResponse;
+import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.mednote.cwru.base.BaseActivity;
 import com.mednote.cwru.base.PermissionRequestHandler;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 import com.apollographql.apollo3.ApolloClient;
+
+import io.reactivex.Single;
+import io.reactivex.observers.DisposableSingleObserver;
 
 public class LogInActivity extends BaseActivity {
 
@@ -21,7 +29,30 @@ public class LogInActivity extends BaseActivity {
       ApplicationContextHelper.getInstance().init(getApplicationContext());
 
       ApolloClient.Builder l = new ApolloClient.Builder();
-      ApolloClient c = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+      ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+
+
+      ApolloCall<LaunchListQuery.Data> queryCall = client.query(new LaunchListQuery());
+      Single<ApolloResponse<LaunchListQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
+      ApolloResponse<LaunchListQuery.Data> result;
+//      queryResponse.subscribe( s -> {
+//                  Log.d("minnie""asdf");
+//              }
+//              );
+
+      queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<LaunchListQuery.Data>>() {
+                                 @Override
+                                 public void onSuccess(@NonNull ApolloResponse<LaunchListQuery.Data> dataApolloResponse) {
+                                    Log.d("minnie","asdf");
+                                 }
+
+                                 @Override
+                                 public void onError(@NonNull Throwable e) {
+                                    Log.d("minnie",e.getMessage());
+                                 }
+                              }
+      );
+
    //problema      c.query(new LaunchListQuery()).execute(new Com);
 
    }
