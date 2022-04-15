@@ -9,4 +9,8 @@
         android:id="@+id/wearableFragment"
         android:name="com.mednote.cwru.googlefit.WearableFragment"
         android:label="WearableFragment" />
+    <activity
+        android:id="@+id/introActivity"
+        android:name="com.mednote.cwru.IntroActivity"
+        android:label="IntroActivity" />
 </navigation>
