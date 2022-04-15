@@ -43,7 +43,7 @@ public class LogInActivity extends BaseActivity {
       queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<LaunchListQuery.Data>>() {
                                  @Override
                                  public void onSuccess(@NonNull ApolloResponse<LaunchListQuery.Data> dataApolloResponse) {
-                                    Log.d("minnie","asdf");
+                                    Log.d("minnie",dataApolloResponse.data.toString());
                                  }
 
                                  @Override
