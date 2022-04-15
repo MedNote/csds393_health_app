@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<data>
+    <import type="android.view.View"/>
+    <variable name="viewmodel" type="com.mednote.cwru.LoginViewModel"/>
+</data>
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dcf3fe"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#dcf3fe">
 
     <TextView
         android:id="@+id/welcome_tv"
@@ -22,6 +27,7 @@
 
     <EditText
         android:id="@+id/id_tv"
+        android:text="@={viewmodel.userName}"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -36,6 +42,7 @@
 
     <EditText
         android:id="@+id/pw_tv"
+        android:text="@={viewmodel.password}"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -60,3 +67,4 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
