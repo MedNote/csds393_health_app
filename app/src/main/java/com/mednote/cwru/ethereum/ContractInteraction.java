@@ -36,7 +36,6 @@ public class ContractInteraction {
 
     private Web3j web3;
     private Credentials credentials;
-    private String contractAddress = "0xd99b95de8DD71C9763b87083B4A687784F08e731";
     private EHR contract;
 
     //event objects
@@ -63,15 +62,19 @@ public class ContractInteraction {
         events.put("MedicalRecordUpdate", MEDICAL_RECORD_UPDATE_HASH);
     }
 
-    public ContractInteraction(String url, String walletPassword, File walletDir) throws CipherException, IOException, ExecutionException, InterruptedException {
-        this.web3 = Utils.getWeb3(url);
+    public ContractInteraction(String walletPassword, File walletDir) throws CipherException, IOException, ExecutionException, InterruptedException {
+        this.web3 = Utils.getWeb3(EthereumConstants.url);
         this.credentials = WalletUtils.loadCredentials(walletPassword, walletDir);
-        this.contract = new EHR(contractAddress, web3, credentials, new DefaultGasProvider());
+        this.contract = EHR.load(EthereumConstants.contractAddress, web3, credentials, new DefaultGasProvider());
     }
 
-    public ContractInteraction(String url, Credentials credentials) throws ExecutionException, InterruptedException {
-        this.web3 = Utils.getWeb3(url);
+    public ContractInteraction(Credentials credentials) throws ExecutionException, InterruptedException {
+        this.web3 = Utils.getWeb3(EthereumConstants.url);
         this.credentials = credentials;
+    }
+
+    public EHR getContract() {
+        return contract;
     }
 
     /**
@@ -81,7 +84,7 @@ public class ContractInteraction {
      * @return List of transaction receipts
      */
     public List<TransactionReceipt> getTransactionsByType(String type, String fromAddress) throws IOException, ExecutionException, InterruptedException {
-        EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, contractAddress);
+        EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, EthereumConstants.contractAddress);
         filter.addSingleTopic(this.events.get(type));
         if (fromAddress != null) {
             filter.addOptionalTopics(fromAddress);

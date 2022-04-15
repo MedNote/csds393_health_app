@@ -3,8 +3,11 @@ package com.mednote.cwru;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.reactivestreams.Subscription;
+import org.web3j.crypto.Bip39Wallet;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.MnemonicUtils;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -23,12 +26,14 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.ethereum.EHR;
+import com.mednote.cwru.ethereum.EthereumConstants;
 import com.mednote.cwru.ethereum.Utils;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -45,19 +50,15 @@ import io.reactivex.subscribers.DisposableSubscriber;
 @RunWith(AndroidJUnit4.class)
 public class SmartContractUnitTest {
 
-    private static final String url = "https://ropsten.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0";
-
     //private key for dummy wallet -- this is totally not secure this is just for testing purposes
     private static final String PRIVATE_KEY = "a364bb7760b042df99a560cb929fad458b3bbe3b1dc63cdeb7dfbe97c8451e03";
-
-    private static final String contractAddress = "0xd99b95de8DD71C9763b87083B4A687784F08e731";
 
     java.util.concurrent.Semaphore s = new java.util.concurrent.Semaphore(0);
 
     @Test
     public void testInfuraConnection() throws ExecutionException, InterruptedException {
         Utils.setupBouncyCastle();
-        Web3j web3 = Utils.getWeb3(url);
+        Web3j web3 = Utils.getWeb3(EthereumConstants.url);
     }
 
     @Test
@@ -75,6 +76,36 @@ public class SmartContractUnitTest {
     }
 
     @Test
+    public void testWalletLoad() throws Exception {
+        Utils.setupBouncyCastle();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SecureRandom sec = new SecureRandom();
+        byte[] entropy = sec.generateSeed(16);
+        String mnemonic = MnemonicUtils.generateMnemonic(entropy);
+        String password = "admin";
+        String[] deets = Utils.loadWallet(appContext, password, mnemonic);
+        String address = deets[0];
+        String walletPath = deets[1];
+        //fill up ether
+        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
+        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
+        //Utils.faucetFill(web3, credentials);
+    }
+
+    @Test
+    public void testGenerateBip39Wallets() throws Exception {
+        Utils.setupBouncyCastle();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        String password = "admin";
+        String[] deets_generated = Utils.createWallet(appContext, password);
+        String address_generated = deets_generated[0];
+        String walletPath = deets_generated[1];
+        String[] deets_loaded = Utils.loadWallet(appContext, password, deets_generated[2]);
+        assertEquals(deets_generated[0], deets_loaded[0]);
+    }
+
+
+    @Test
     public void testLoadWallet() throws CipherException, IOException {
         Credentials credentials = WalletUtils.loadCredentials("admin", "/data/user/0/com.mednote.cwru/files/UTC--2022-04-09T00-20-38.1Z--35546d6d0a830993c9126da4ce2d871975cd20a5.json");
         Log.i("SmartContract", credentials.getAddress());
@@ -85,7 +116,7 @@ public class SmartContractUnitTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         String path = appContext.getFilesDir().getAbsolutePath();
         Credentials credentials = Credentials.create(PRIVATE_KEY);
-        ContractInteraction ci = new ContractInteraction(url, credentials);
+        ContractInteraction ci = new ContractInteraction(credentials);
         List<TransactionReceipt> trs = ci.getTransactionsByType("DoctorCreation", null);
         for(TransactionReceipt tr : trs) {
             //Log.i("SmartContract", tr.)
@@ -97,8 +128,8 @@ public class SmartContractUnitTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         String path = appContext.getFilesDir().getAbsolutePath();
         Credentials credentials = Credentials.create(PRIVATE_KEY);
-        Web3j web3 = Utils.getWeb3(url);
-        EHR ehr = EHR.load(contractAddress, web3, credentials, new DefaultGasProvider());
+        Web3j web3 = Utils.getWeb3(EthereumConstants.url);
+        EHR ehr = EHR.load(EthereumConstants.contractAddress, web3, credentials, new DefaultGasProvider());
         EthGetTransactionReceipt tr = web3.ethGetTransactionReceipt("0x2696baf4fa0c08599817e45eab14100efb642b6468696f6af70df3d9de7f3bde").send();
         TransactionReceipt receipt = tr.getResult();
     }
@@ -110,9 +141,9 @@ public class SmartContractUnitTest {
 
     @Test
     public void getLogs() throws Exception {
-        Web3j web3 = Utils.getWeb3(url);
+        Web3j web3 = Utils.getWeb3(EthereumConstants.url);
         EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST,
-                DefaultBlockParameterName.LATEST, contractAddress);
+                DefaultBlockParameterName.LATEST, EthereumConstants.contractAddress);
         web3.ethLogFlowable(filter).subscribe(log -> {
             Log.i("SmartContract", log.getTopics().get(0));
         });
