@@ -1,5 +1,6 @@
 package com.mednote.cwru;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -12,7 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class UserFragment extends Fragment {
+import com.mednote.cwru.databinding.UserFragmentBinding;
+import com.mednote.cwru.databinding.WearableFragmentBinding;
+
+public class UserFragment extends Fragment implements View.OnClickListener {
 
     private UserViewModel mViewModel;
 
@@ -23,14 +27,28 @@ public class UserFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.user_fragment, container, false);
+        // Inflate the layout for this fragment
+        // And binding
+        UserFragmentBinding binding =  DataBindingUtil.inflate(inflater, R.layout.user_fragment, container, false);
+        mViewModel = new UserViewModel();
+        binding.setViewmodel(getmViewModel());
+        View rootView = binding.getRoot();
+        return rootView;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        // TODO: Use the ViewModel
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
     }
 
+    public UserViewModel getmViewModel() {
+        return mViewModel;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
 }
