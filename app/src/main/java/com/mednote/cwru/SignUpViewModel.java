@@ -1,7 +1,5 @@
 package com.mednote.cwru;
 
-import android.util.Log;
-
 import androidx.databinding.Bindable;
 
 import com.mednote.cwru.base.BaseViewModel;
@@ -10,18 +8,20 @@ import java.util.concurrent.TimeUnit;
 
 public class SignUpViewModel extends BaseViewModel {
 
-    private String userName;
+    private String fname;
+    private String lname;
     private String password;
-    private String name;
     private String DOB;
+    private Boolean doctor;
     private RegistrationStatus signUpStatus;
 
     public SignUpViewModel() {
-        userName = "";
+        fname = "";
+        lname = "";
         password = "";
-        name = "";
         DOB = "";
-        signUpStatus = RegistrationStatus.registered;
+        doctor = false;
+        signUpStatus = RegistrationStatus.logged_out;
     }
 
     @Override
@@ -29,17 +29,15 @@ public class SignUpViewModel extends BaseViewModel {
     }
 
     @Bindable
-    public String getUserName() {
-        return userName;
-    }
+    public String getFname() { return fname; }
+
+    @Bindable
+    public String getLname() { return lname; }
 
     @Bindable
     public String getPassword() {
         return password;
     }
-
-    @Bindable
-    public String getAcctName() { return name; }
 
     @Bindable
     public String getDOB() { return DOB; }
@@ -49,9 +47,14 @@ public class SignUpViewModel extends BaseViewModel {
         return signUpStatus;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-        notifyPropertyChanged(BR.userName);
+    public void setFname(String fname) {
+        this.fname = fname;
+        notifyPropertyChanged(BR.fname);
+    }
+
+    public void setLname(String lname) {
+        this.lname = lname;
+        notifyPropertyChanged(BR.lname);
     }
 
     public void setPassword(String password) {
@@ -59,12 +62,9 @@ public class SignUpViewModel extends BaseViewModel {
         notifyPropertyChanged(BR.password);
     }
 
-    public void setAcctName(String name) {
-        this.name = name;
-    }
-
     public void setDOB(String DOB) {
         this.DOB = DOB;
+        notifyPropertyChanged(BR.dOB);
     }
 
     public void setSignUpStatus(RegistrationStatus signUpStatus) {

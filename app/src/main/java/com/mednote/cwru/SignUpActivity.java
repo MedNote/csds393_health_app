@@ -2,26 +2,20 @@ package com.mednote.cwru;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.Observable;
 
-import com.apollographql.apollo3.ApolloCall;
-import com.apollographql.apollo3.api.ApolloResponse;
 import com.mednote.cwru.base.BaseActivity;
 //import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.mednote.cwru.base.PermissionRequestHandler;
-import com.mednote.cwru.databinding.ActivityLoginBinding;
 import com.mednote.cwru.databinding.ActivitySignupBinding;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
-import com.apollographql.apollo3.ApolloClient;
 
 //import io.reactivex.Single;
 //import io.reactivex.observers.DisposableSingleObserver;
@@ -115,11 +109,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View view) {
         int viewClicked = view.getId();
         if (viewClicked == R.id.proceed_to_verification_button) {
-            if(getSignUpViewModel().getUserName().isEmpty() || getSignUpViewModel().getPassword().isEmpty() || getSignUpViewModel().getAcctName().isEmpty() || getSignUpViewModel().getDOB().isEmpty()){
-                getSignUpViewModel().setSignUpStatus(RegistrationStatus.incomplete);
-            } else {
-                getSignUpViewModel().signup();
-            }
+            getSignUpViewModel().signup();
         }
     }
 }
