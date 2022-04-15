@@ -9,13 +9,17 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginViewModel extends BaseViewModel {
 
-    private String userName;
+    private String WalletID;
+    private String mnemonic;
     private String password;
+    private Boolean doctor;
     private LoginStatus loginStatus;
 
     public LoginViewModel() {
-        userName = "";
+        WalletID = "";
+        mnemonic = "";
         password = "";
+        doctor = false;
         loginStatus = LoginStatus.logged_out;
     }
 
@@ -25,8 +29,8 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     @Bindable
-    public String getUserName() {
-        return userName;
+    public String getWalletID() {
+        return WalletID;
     }
 
     @Bindable
@@ -35,13 +39,28 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     @Bindable
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    @Bindable
+    public Boolean getDoctor() {
+        return doctor;
+    }
+
+    @Bindable
     public LoginStatus getLoginStatus() {
         return loginStatus;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-        notifyPropertyChanged(BR.userName);
+    public void setWalletID(String ID) {
+        this.WalletID = ID;
+        notifyPropertyChanged(BR.walletID);
+    }
+
+    public void setMnemonic(String mnemonic) {
+        this.mnemonic = mnemonic;
+        notifyPropertyChanged(BR.mnemonic);
     }
 
     public void setPassword(String password) {

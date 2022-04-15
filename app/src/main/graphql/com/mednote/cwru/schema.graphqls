@@ -1,9 +1,9 @@
 type RootQueryType {
-  record_by_id(UUID: ID): MedNote
+  record_by_id(uuid: ID): MedNote
 
-  record_by_uuid(UUID: String): MedNote
+  record_by_uuid(uuid: String): MedNote
 
-  record_after_date(UUID: ID, date: DateTime): MedNote
+  record_after_date(uuid: String, date: DateTime): MedNote
 }
 
 type MedNote {
@@ -46,11 +46,11 @@ type note {
 }
 
 type Mutation {
-  addRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  addRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 
-  updateRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  updateRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 
-  appendRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  appendRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 }
 
 input nameIn {
@@ -61,6 +61,13 @@ input nameIn {
 
 input immunizationIn {
   immunization: String
+
+  date: DateTime
+}
+
+
+input noteIn {
+  note: String
 
   date: DateTime
 }

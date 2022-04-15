@@ -43,16 +43,15 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
       setSupportActionBar(toolbar);
       ApplicationContextHelper.getInstance().init(getApplicationContext());
 
-      /*ApolloClient.Builder l = new ApolloClient.Builder();
+      ApolloClient.Builder l = new ApolloClient.Builder();
       ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
 
+      ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
+      Single<ApolloResponse<RecordByUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
-      ApolloCall<LaunchListQuery.Data> queryCall = client.query(new LaunchListQuery());
-      Single<ApolloResponse<LaunchListQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
-
-      queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<LaunchListQuery.Data>>() {
+      queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {
                                  @Override
-                                 public void onSuccess(@NonNull ApolloResponse<LaunchListQuery.Data> dataApolloResponse) {
+                                 public void onSuccess(@NonNull ApolloResponse<RecordByUuidQuery.Data> dataApolloResponse) {
                                     Log.d("minnie",dataApolloResponse.data.toString());
                                  }
 
@@ -61,8 +60,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                                     Log.d("minnie",e.getMessage());
                                  }
                               }
-      );*/
-
+      );
       Button loginButton = (Button) findViewById(R.id.proceed_to_verification_button);
       loginButton.setOnClickListener(this);
 

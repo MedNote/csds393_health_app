@@ -346,7 +346,7 @@ public class WearableViewModel extends BaseViewModel {
         setObservableRequestStringList(inString);
     }
 
-    private ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>> observableRequestListListener = new ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>>() {
+    private final ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>> observableRequestListListener = new ObservableList.OnListChangedCallback<ObservableList<GoogleFitReadRequestData>>() {
         @Override
         public void onChanged(ObservableList<GoogleFitReadRequestData> sender) {
             notifyPropertyChanged(BR.observableRequestList);
@@ -385,7 +385,7 @@ public class WearableViewModel extends BaseViewModel {
         }
     };
 
-    private Observable.OnPropertyChangedCallback selfCallback = new Observable.OnPropertyChangedCallback() {
+    private final Observable.OnPropertyChangedCallback selfCallback = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
         if (propertyId == BR.wearableGoogleLoggedIn) {

@@ -93,7 +93,7 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private Observable.OnPropertyChangedCallback onPropertyChangedCallback = new Observable.OnPropertyChangedCallback() {
+    private final Observable.OnPropertyChangedCallback onPropertyChangedCallback = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
             if (propertyId == BR.observableRequestStringList) {

@@ -92,24 +92,19 @@ public class EHR extends Contract {
     public static final String FUNC_UPDATERECORDHASH = "updateRecordHash";
 
     public static final Event DOCTORAUTH_EVENT = new Event("DoctorAuth",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bool>() {}));
-    ;
+            Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bool>() {}));
 
     public static final Event DOCTORCREATION_EVENT = new Event("DoctorCreation",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Address>(true) {}, new TypeReference<DynamicBytes>() {}));
-    ;
+            Arrays.asList(new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Address>(true) {}, new TypeReference<DynamicBytes>() {}));
 
     public static final Event MEDICALRECORDUPDATE_EVENT = new Event("MedicalRecordUpdate",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bytes32>() {}));
-    ;
+            Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bytes32>() {}));
 
     public static final Event MEDICALRECORDVIEW_EVENT = new Event("MedicalRecordView",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
-    ;
+            Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
 
     public static final Event PATIENTCREATION_EVENT = new Event("PatientCreation",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Address>(true) {}, new TypeReference<DynamicBytes>() {}, new TypeReference<Address>(true) {}));
-    ;
+            Arrays.asList(new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Address>(true) {}, new TypeReference<DynamicBytes>() {}, new TypeReference<Address>(true) {}));
 
     @Deprecated
     protected EHR(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
@@ -311,140 +306,140 @@ public class EHR extends Contract {
     public RemoteFunctionCall<TransactionReceipt> authorizeDoctor(String _doctorAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_AUTHORIZEDOCTOR,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
-                Collections.<TypeReference<?>>emptyList());
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
+                Collections.emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> createDoctor(String _firstName, String _lastName, String _doctorAddress, byte[] _doctorPublicKey) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_CREATEDOCTOR,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_firstName),
+                Arrays.asList(new org.web3j.abi.datatypes.Utf8String(_firstName),
                         new org.web3j.abi.datatypes.Utf8String(_lastName),
                         new org.web3j.abi.datatypes.Address(160, _doctorAddress),
                         new org.web3j.abi.datatypes.DynamicBytes(_doctorPublicKey)),
-                Collections.<TypeReference<?>>emptyList());
+                Collections.emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> createPatient(String _firstName, String _lastName, String _patientAddress, byte[] _patientPublicKey) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_CREATEPATIENT,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_firstName),
+                Arrays.asList(new org.web3j.abi.datatypes.Utf8String(_firstName),
                         new org.web3j.abi.datatypes.Utf8String(_lastName),
                         new org.web3j.abi.datatypes.Address(160, _patientAddress),
                         new org.web3j.abi.datatypes.DynamicBytes(_patientPublicKey)),
-                Collections.<TypeReference<?>>emptyList());
+                Collections.emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> deauthorizeDoctor(String _doctorAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_DEAUTHORIZEDOCTOR,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
-                Collections.<TypeReference<?>>emptyList());
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
+                Collections.emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<Boolean> doctorAuthorized(String _doctorAddress, String _patientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_DOCTORAUTHORIZED,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress),
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress),
                         new org.web3j.abi.datatypes.Address(160, _patientAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+                Arrays.asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteFunctionCall<Boolean> doctorExists(String _doctorAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_DOCTOREXISTS,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
+                Arrays.asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteFunctionCall<String> getAddress(byte[] pubkey) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETADDRESS,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicBytes(pubkey)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.DynamicBytes(pubkey)),
+                Arrays.asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<BigInteger> getDoctorCount() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETDOCTORCOUNT,
-                Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+                Arrays.asList(),
+                Arrays.asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteFunctionCall<String> getDoctorFirstName(String _doctorAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETDOCTORFIRSTNAME,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
+                Arrays.asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<String> getDoctorLastName(String _doctorAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETDOCTORLASTNAME,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _doctorAddress)),
+                Arrays.asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<byte[]> getEHRHash(String _patientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETEHRHASH,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
+                Arrays.asList(new TypeReference<Bytes32>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<BigInteger> getPatientCount() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPATIENTCOUNT,
-                Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+                Arrays.asList(),
+                Arrays.asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteFunctionCall<String> getPatientFirstName(String _patientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPATIENTFIRSTNAME,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
+                Arrays.asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<String> getPatientLastName(String _patientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPATIENTLASTNAME,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
+                Arrays.asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<byte[]> getPublicKey(String _address) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPUBLICKEY,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _address)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicBytes>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _address)),
+                Arrays.asList(new TypeReference<DynamicBytes>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<Boolean> patientExists(String _patientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_PATIENTEXISTS,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _patientAddress)),
+                Arrays.asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteFunctionCall<String> recoverPublicAddress(byte[] messagehash, BigInteger v, byte[] r, byte[] s) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_RECOVERPUBLICADDRESS,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(messagehash),
+                Arrays.asList(new org.web3j.abi.datatypes.generated.Bytes32(messagehash),
                         new org.web3j.abi.datatypes.generated.Uint8(v),
                         new org.web3j.abi.datatypes.generated.Bytes32(r),
                         new org.web3j.abi.datatypes.generated.Bytes32(s)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+                Arrays.asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<Tuple3<BigInteger, byte[], byte[]>> splitSignature(byte[] signature) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_SPLITSIGNATURE,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicBytes(signature)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint8>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
+                Arrays.asList(new org.web3j.abi.datatypes.DynamicBytes(signature)),
+                Arrays.asList(new TypeReference<Uint8>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
         return new RemoteFunctionCall<Tuple3<BigInteger, byte[], byte[]>>(function,
                 new Callable<Tuple3<BigInteger, byte[], byte[]>>() {
                     @Override
@@ -461,9 +456,9 @@ public class EHR extends Contract {
     public RemoteFunctionCall<TransactionReceipt> updateRecordHash(String _patientAddress, byte[] _hash) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_UPDATERECORDHASH,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _patientAddress),
+                Arrays.asList(new org.web3j.abi.datatypes.Address(160, _patientAddress),
                         new org.web3j.abi.datatypes.generated.Bytes32(_hash)),
-                Collections.<TypeReference<?>>emptyList());
+                Collections.emptyList());
         return executeRemoteCallTransaction(function);
     }
 

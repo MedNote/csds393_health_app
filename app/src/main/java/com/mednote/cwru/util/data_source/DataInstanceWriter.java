@@ -11,8 +11,8 @@ import java.lang.reflect.Type;
 
 public class DataInstanceWriter<T> {
     protected Gson gson;
-    private DataSource dataSource;
-    private File baseDir;
+    private final DataSource dataSource;
+    private final File baseDir;
     public DataInstanceWriter(DataSource dataSource, File baseDir) {
         this.dataSource = dataSource;
         this.baseDir = baseDir;
