@@ -74,7 +74,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                String toastText = "Status is " + getLoginViewModel().getLoginStatus();
                Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
                if (getLoginViewModel().getLoginStatus() == LoginStatus.logged_in) {
-                  Intent new_intent = new Intent(LogInActivity.this, MainActivity.class);
+                  Intent new_intent = new Intent(LogInActivity.this, UserActivity.class);
                   startActivity(new_intent);
                }
             }
