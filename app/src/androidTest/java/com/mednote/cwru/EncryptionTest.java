@@ -1,9 +1,12 @@
 package com.mednote.cwru;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.util.Encryption;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -18,6 +21,8 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
 
 import javax.crypto.BadPaddingException;
@@ -49,6 +54,13 @@ public class EncryptionTest {
     @Test
     public void testPublicPrivateEncrypt() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, NoSuchProviderException {
         Key[] keys = Encryption.getKeys();
+        RSAPublicKey pubKey = (RSAPublicKey) keys[0];
+        RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keys[1];
+        Log.i("Encryption", "Public Key modulus: " + pubKey.getModulus());
+        Log.i("Encryption", "Public Key exponent: " + pubKey.getPublicExponent());
+        Log.i("Encryption", "Private Key p: " + privKey.getPrimeExponentP());
+        Log.i("Encryption", "Private Key q: " + privKey.getPrimeExponentQ());
+        Log.i("Encryption", "Private Key exponent: " + privKey.getPrivateExponent());
         OAEPParameterSpec spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
         byte[] temp = Encryption.encrypt(keys[0], "Hello, world!", spec);
         Log.i("Encryption", "Decrypted plaintext: " + new String(Encryption.decrypt(keys[1], temp, spec)));
