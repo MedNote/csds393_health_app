@@ -1,0 +1,55 @@
+type RootQueryType {
+  record_by_id(UUID: ID): MedNote
+  record_by_uuid(UUID: String): MedNote
+  record_after_date(UUID: ID, date: DateTime): MedNote
+}
+
+type MedNote {
+  uuid: String
+  name: name
+  DOB: String
+  allergies: [String]
+  medications: [String]
+  immunizations: [immunization]
+  visit_notes: [note]
+}
+
+type name {
+  first_name: String
+  last_name: String
+}
+
+type immunization {
+  immunization: String
+  date: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type note {
+  note: String
+  date: DateTime
+}
+
+type Mutation {
+  addRecord(uuid: String, name: nameIn, DOB: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+  updateRecord(uuid: String, name: nameIn, DOB: String, allergies: [String], medications: [String], immunizations: [immunizationIn]): MedNote
+}
+
+input nameIn {
+  first_name: String
+  last_name: String
+}
+
+input immunizationIn {
+  immunization: String
+  date: DateTime
+}
+
+schema {
+  query: RootQueryType
+  mutation: Mutation
+}

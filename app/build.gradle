@@ -1,11 +1,12 @@
 plugins {
     id 'com.android.application'
+    id("com.apollographql.apollo3").version("3.2.1")
 }
 
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\Owner\\.android\\debug.keystore')
+//            storeFile file('C:\\Users\\fedor\\.android\\debug.keystore')
             storePassword 'android'
             keyPassword 'android'
             keyAlias 'androiddebugkey'
@@ -94,7 +95,12 @@ dependencies {
     // https://mvnrepository.com/artifact/xerces/xercesImpl
     implementation group: 'xerces', name: 'xercesImpl', version: '2.12.0'
 
+    implementation("com.apollographql.apollo3:apollo-runtime:3.2.1")
 
+    implementation("com.apollographql.apollo3:apollo-rx2-support:3.2.1")
 
+}
 
+apollo {
+    packageName.set("com.mednote.cwru")
 }
