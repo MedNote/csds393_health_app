@@ -1,10 +1,14 @@
 package com.mednote.cwru.base;
 
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize Context Singleton
+        ApplicationContextHelper.getInstance().init(getApplicationContext());
+    }
+
     // region Requesting Permissions
 
     public Map<String, Boolean> arePermissionsGranted(List<String> permissions) {

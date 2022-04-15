@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+import com.mednote.cwru.BR;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.LoggedInUser;
 import com.mednote.cwru.serverapi.ServerResult;
@@ -32,9 +33,9 @@ public class LoginRepository {
         this.sp = appContext.getSharedPreferences("UserData", Context.MODE_PRIVATE);
     }
 
-    public static LoginRepository getInstance() {
+    public static LoginRepository getInstance(LoginDataSource loginDataSource) {
         if (instance == null) {
-            instance = new LoginRepository(new LoginDataSource());
+            instance = new LoginRepository(loginDataSource);
         }
         return instance;
     }
@@ -77,16 +78,15 @@ public class LoginRepository {
         this.setLoggedInUser(this.user);
     }
 
-    public FutureTaskWrapper<ServerResult> login(AccountCredentials accountCredentials) {
-        OnSuccessListener<ServerResult> listenerRepository = new OnSuccessListener<ServerResult>() {
+    public FutureTaskWrapper<ServerResult<LoginServerResponse>> login(AccountCredentials accountCredentials) {
+        OnSuccessListener<ServerResult<LoginServerResponse>> listenerRepository = new OnSuccessListener<ServerResult<LoginServerResponse>>() {
             @Override
-            public void onSuccess(ServerResult serverResult) {
-                // TODO: finish
-                onLoginResult(serverResult);
+            public void onSuccess(ServerResult<LoginServerResponse> serverResult) {
+                onLoginResult(serverResult.getResult());
             }
         };
         // handle login
-        FutureTaskWrapper<ServerResult> task = dataSource.login(accountCredentials);
+        FutureTaskWrapper<ServerResult<LoginServerResponse>> task = dataSource.login(accountCredentials);
         task.addOnSuccessListener(listenerRepository);
         return task;
     }
@@ -96,7 +96,10 @@ public class LoginRepository {
      * @param serverResult
      * @return
      */
-    public LoggedInUser onLoginResult(ServerResult serverResult) {
-        return null;
+    public LoggedInUser onLoginResult(LoginServerResponse loginServerResponse) {
+        if (loginServerResponse.getUserExists()) {
+            LoggedInUser newUser = new LoggedInUser(loginServerResponse.getAccountCredentials());
+        }
+        return user;
     }
 }
