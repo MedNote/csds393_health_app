@@ -2,6 +2,7 @@ package com.mednote.cwru.util;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
@@ -91,7 +92,7 @@ public class Encryption {
     }
 
     public static byte[] encrypt(Key key, String plaintext, OAEPParameterSpec spec) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, InvalidAlgorithmParameterException, NoSuchProviderException {
-        byte[] message = plaintext.getBytes("UTF-8");
+        byte[] message = plaintext.getBytes(StandardCharsets.UTF_8);
         Cipher ecies = Cipher.getInstance("RSA");
         ecies.init(Cipher.ENCRYPT_MODE, key, spec);
         return ecies.doFinal(message);

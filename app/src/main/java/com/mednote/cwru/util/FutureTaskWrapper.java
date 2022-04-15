@@ -17,8 +17,8 @@ import java.util.concurrent.FutureTask;
 public class FutureTaskWrapper<V> extends FutureTask<V> {
 
     private boolean successful;
-    private List<OnSuccessListener<? super V>> successListeners;
-    private List<OnFailureListener> failureListeners;
+    private final List<OnSuccessListener<? super V>> successListeners;
+    private final List<OnFailureListener> failureListeners;
 
     public FutureTaskWrapper(Callable<V> callable) {
         super(callable);

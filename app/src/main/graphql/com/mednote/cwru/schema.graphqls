@@ -1,9 +1,9 @@
 type RootQueryType {
-  record_by_id(UUID: ID): MedNote
+  record_by_id(uuid: ID): MedNote
 
-  record_by_uuid(UUID: String): MedNote
+  record_by_uuid(uuid: String): MedNote
 
-  record_after_date(UUID: ID, date: DateTime): MedNote
+  record_after_date(uuid: String, date: DateTime): MedNote
 }
 
 type MedNote {

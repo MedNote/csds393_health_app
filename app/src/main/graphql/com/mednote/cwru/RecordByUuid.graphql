@@ -1,5 +1,5 @@
 query RecordByUuid($uuid: String!) {
-    record_by_uuid(UUID : $uuid){
+    record_by_uuid(uuid : $uuid){
     uuid
     name{
       first_name

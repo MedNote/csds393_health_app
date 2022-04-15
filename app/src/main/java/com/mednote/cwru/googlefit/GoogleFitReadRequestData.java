@@ -18,8 +18,8 @@ public class GoogleFitReadRequestData extends BaseObservable {
     private long startTime;
     private long endTime;
     private File file;
-    private ObservableBoolean responseReceived;
-    private ObservableBoolean sentToServer;
+    private final ObservableBoolean responseReceived;
+    private final ObservableBoolean sentToServer;
 
     public GoogleFitReadRequestData(DataType dataType, long startTime, long endTime) {
         this.dataType = dataType;

@@ -34,17 +34,17 @@ import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class ContractInteraction {
 
-    private Web3j web3;
-    private Credentials credentials;
-    private String contractAddress = "0xd99b95de8DD71C9763b87083B4A687784F08e731";
+    private final Web3j web3;
+    private final Credentials credentials;
+    private final String contractAddress = "0xd99b95de8DD71C9763b87083B4A687784F08e731";
     private EHR contract;
 
     //event objects
-    public static final Event PATIENT_CREATION = new Event("PatientCreation", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
-    public static final Event DOCTOR_CREATION = new Event("DoctorCreation", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}));
-    public static final Event DOCTOR_AUTHORIZATION = new Event("DoctorAuthorization", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bool>(false) {}));
-    public static final Event MEDICAL_RECORD_VIEW = new Event("MedicalRecordView", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
-    public static final Event MEDICAL_RECORD_UPDATE = new Event("MedicalRecordUpdate", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bytes32>(false) {}));
+    public static final Event PATIENT_CREATION = new Event("PatientCreation", Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
+    public static final Event DOCTOR_CREATION = new Event("DoctorCreation", Arrays.asList(new TypeReference<Address>(true) {}));
+    public static final Event DOCTOR_AUTHORIZATION = new Event("DoctorAuthorization", Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bool>(false) {}));
+    public static final Event MEDICAL_RECORD_VIEW = new Event("MedicalRecordView", Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
+    public static final Event MEDICAL_RECORD_UPDATE = new Event("MedicalRecordUpdate", Arrays.asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Bytes32>(false) {}));
 
     //event object hashes
     private static final String PATIENT_CREATION_HASH = EventEncoder.encode(PATIENT_CREATION);
@@ -82,7 +82,7 @@ public class ContractInteraction {
      */
     public List<TransactionReceipt> getTransactionsByType(String type, String fromAddress) throws IOException, ExecutionException, InterruptedException {
         EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, contractAddress);
-        filter.addSingleTopic(this.events.get(type));
+        filter.addSingleTopic(events.get(type));
         if (fromAddress != null) {
             filter.addOptionalTopics(fromAddress);
         }

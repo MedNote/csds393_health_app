@@ -47,7 +47,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
       ApolloClient.Builder l = new ApolloClient.Builder();
       ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
 
-      /*ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
+      ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
       Single<ApolloResponse<RecordByUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
       queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {
@@ -61,7 +61,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                                     Log.d("minnie",e.getMessage());
                                  }
                               }
-      );*/
+      );
       Button loginButton = (Button) findViewById(R.id.proceed_to_verification_button);
       loginButton.setOnClickListener(this);
 
