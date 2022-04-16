@@ -24,10 +24,19 @@ import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.ethereum.EHR;
 import com.mednote.cwru.ethereum.EthereumConstants;
 import com.mednote.cwru.ethereum.Utils;
+import com.mednote.cwru.login.LoginRepository;
+import com.mednote.cwru.login.LoginServerResponse;
+import com.mednote.cwru.login.ProviderLoginDataSource;
+import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.serverapi.ServerResult;
+import com.mednote.cwru.util.FutureTaskWrapper;
+import com.mednote.cwru.util.helpers.ApplicationContextHelper;
+import com.mednote.cwru.util.helpers.ExecutorServiceHelper;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -93,7 +102,7 @@ public class SmartContractUnitTest {
     }
 
     @Test
-    public void testGenerateBip39Wallets() throws Exception {
+    public void testWalletRecreate() throws Exception {
         Utils.setupBouncyCastle();
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         String password = "admin";
@@ -109,6 +118,30 @@ public class SmartContractUnitTest {
     public void testLoadWallet() throws CipherException, IOException {
         Credentials credentials = WalletUtils.loadCredentials("admin", "/data/user/0/com.mednote.cwru/files/UTC--2022-04-09T00-20-38.1Z--35546d6d0a830993c9126da4ce2d871975cd20a5.json");
         Log.i("SmartContract", credentials.getAddress());
+    }
+
+    @Test
+    public void testLogin() throws CipherException, IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        Utils.setupBouncyCastle();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        ApplicationContextHelper.getInstance().init(appContext);
+        String password = "admin";
+        String[] deets = Utils.createWallet(appContext, password);
+        LoginRepository loginRepository = LoginRepository.getInstance(new ProviderLoginDataSource());
+        FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(new AccountCredentials(deets[0], password, deets[2]));
+        futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
+            @Override
+            public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
+                Log.i("SmartContract", "Login Successful");
+            }
+        });
+        ExecutorServiceHelper.getInstance().execute(futureTask);
+        while (true) {
+            if (futureTask.isComplete()) {
+//                break;
+            }
+        }
+
     }
 
     @Test

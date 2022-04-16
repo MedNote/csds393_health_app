@@ -70,7 +70,7 @@ public class Utils {
         String mnemonic = bip39Wallet.getMnemonic();
         walletPath = walletPath + "/" + fileName;
         walletDir = new File(walletPath);
-        Credentials credentials = WalletUtils.loadCredentials(password, walletDir);
+        Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
         Log.i("SmartContract", "New wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
         return new String[] {credentials.getAddress(), walletPath, mnemonic};
     }
@@ -82,7 +82,7 @@ public class Utils {
         String fileName = bip39Wallet.getFilename();
         walletPath = walletPath + "/" + fileName;
         walletDir = new File(walletPath);
-        Credentials credentials = WalletUtils.loadCredentials(password, walletDir);
+        Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
         Log.i("SmartContract", "Existing wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
         return new String[] {credentials.getAddress(), walletPath, mnemonic};
     }

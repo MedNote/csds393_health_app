@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-@RequiresApi(api = Build.VERSION_CODES.R)
 public class ContractInteraction {
 
     private Web3j web3;
@@ -63,14 +62,13 @@ public class ContractInteraction {
     }
 
     public ContractInteraction(String walletPassword, File walletDir) throws CipherException, IOException, ExecutionException, InterruptedException {
-        this.web3 = Utils.getWeb3(EthereumConstants.url);
-        this.credentials = WalletUtils.loadCredentials(walletPassword, walletDir);
-        this.contract = EHR.load(EthereumConstants.contractAddress, web3, credentials, new DefaultGasProvider());
+        this(WalletUtils.loadCredentials(walletPassword, walletDir));
     }
 
     public ContractInteraction(Credentials credentials) throws ExecutionException, InterruptedException {
         this.web3 = Utils.getWeb3(EthereumConstants.url);
         this.credentials = credentials;
+        this.contract = EHR.load(EthereumConstants.contractAddress, web3, credentials, new DefaultGasProvider());
     }
 
     public EHR getContract() {
