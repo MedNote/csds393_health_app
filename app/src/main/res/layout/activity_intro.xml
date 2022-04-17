@@ -39,7 +39,7 @@
         android:layout_height="54dp"
         android:background="@drawable/style_button_blue"
         android:textSize="16dp"
-        android:text="Create Credentials"
+        android:text="Sign Up"
         android:textColor="@color/white"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"

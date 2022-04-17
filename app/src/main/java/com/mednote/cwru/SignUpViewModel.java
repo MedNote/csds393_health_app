@@ -78,6 +78,9 @@ public class SignUpViewModel extends BaseViewModel {
             TimeUnit.SECONDS.sleep(2);
             setSignUpStatus(RegistrationStatus.registered);
 //        TODO: finish registration with blockchain
+            // TODO: available only to the doctor
+            // TODO: generateWallet
+            // TODO:
 
         } catch (InterruptedException e) {
 

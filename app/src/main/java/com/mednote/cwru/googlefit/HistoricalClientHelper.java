@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 public class HistoricalClientHelper {
     private static final String TAG = "Google_Fit: ";
-    private final Context appContext;
-    private final GoogleSignInAccount googleSignInAccount;
+    private Context appContext;
+    private GoogleSignInAccount googleSignInAccount;
     private int MaxInContainer = 20000;
 
     public HistoricalClientHelper(GoogleSignInAccount googleSignInAccount) {

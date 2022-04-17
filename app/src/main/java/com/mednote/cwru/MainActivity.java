@@ -26,9 +26,6 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        // Initialize Context Singleton
-        ApplicationContextHelper.getInstance().init(getApplicationContext());
-
         wearableViewModel = new WearableViewModel(this);
         googleLoginViewModel = new GoogleLoginViewModel(this);
         // TODO: Handle permissions of every viewModel (including default one)

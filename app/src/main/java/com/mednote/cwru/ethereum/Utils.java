@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.web3j.crypto.Bip39Wallet;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
@@ -25,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.BitSet;
 import java.util.concurrent.ExecutionException;
 
 public class Utils {
@@ -63,12 +65,26 @@ public class Utils {
     public static String[] createWallet(Context c, String password) throws InvalidAlgorithmParameterException, CipherException, NoSuchAlgorithmException, IOException, NoSuchProviderException {
         String walletPath = c.getFilesDir().getAbsolutePath();
         File walletDir = new File(walletPath);
-        String fileName =  WalletUtils.generateLightNewWalletFile(password, walletDir);
+        Bip39Wallet bip39Wallet = WalletUtils.generateBip39Wallet(password, walletDir);
+        String fileName = bip39Wallet.getFilename();
+        String mnemonic = bip39Wallet.getMnemonic();
         walletPath = walletPath + "/" + fileName;
         walletDir = new File(walletPath);
-        Credentials credentials = WalletUtils.loadCredentials(password, walletDir);
+        Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
         Log.i("SmartContract", "New wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
-        return new String[] {credentials.getAddress(), walletPath};
+        return new String[] {credentials.getAddress(), walletPath, mnemonic};
+    }
+
+    public static String[] loadWallet(Context c, String password, String mnemonic) throws CipherException, IOException {
+        String walletPath = c.getFilesDir().getAbsolutePath();
+        File walletDir = new File(walletPath);
+        Bip39Wallet bip39Wallet = WalletUtils.generateBip39WalletFromMnemonic(password, mnemonic, walletDir);
+        String fileName = bip39Wallet.getFilename();
+        walletPath = walletPath + "/" + fileName;
+        walletDir = new File(walletPath);
+        Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
+        Log.i("SmartContract", "Existing wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
+        return new String[] {credentials.getAddress(), walletPath, mnemonic};
     }
 
     public static void faucetFill(Web3j web3, Credentials c) throws Exception {

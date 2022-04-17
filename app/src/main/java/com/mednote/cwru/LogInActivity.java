@@ -16,7 +16,6 @@ import androidx.databinding.Observable;
 
 import com.apollographql.apollo3.ApolloCall;
 import com.apollographql.apollo3.api.ApolloResponse;
-import com.apollographql.apollo3.api.Optional;
 import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.mednote.cwru.base.BaseActivity;
 import com.mednote.cwru.base.PermissionRequestHandler;

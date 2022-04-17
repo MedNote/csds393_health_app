@@ -3,6 +3,7 @@ package com.mednote.cwru;
 import androidx.databinding.Bindable;
 
 import com.mednote.cwru.base.BaseViewModel;
+import com.mednote.cwru.ethereum.EHR;
 
 import java.util.concurrent.TimeUnit;
 
@@ -76,6 +77,15 @@ public class LoginViewModel extends BaseViewModel {
         setLoginStatus(LoginStatus.pending);
         try {
 //        TODO: finish login with blockchain
+            Runnable loggingIn = new Runnable() {
+                @Override
+                public void run() {
+//                    EHR ehr =
+                }
+                // TODO: login with password and mnemonic
+                // TODO: get wallet address (ass uuid) from credentials object
+                // TODO: user patientExists to check if wallet address exists
+            };
             TimeUnit.SECONDS.sleep(2);
             setLoginStatus(LoginStatus.logged_in);
         } catch (InterruptedException e) {
