@@ -33,6 +33,7 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -98,17 +99,28 @@ public class EncryptionTest {
                                         Log.d("minnie",dataApolloResponse.data.toString());
 
                                         SecretKey symmKey = null;
+                                        Record_by_uuid originalRecord = dataApolloResponse.data.record_by_uuid;
                                         Record_by_uuid encryptedRecord = null;
+                                        Record_by_uuid decryptedRecord = null;
                                         try {
                                             symmKey = Encryption.createSymmetricKey("AES");
                                         } catch (NoSuchAlgorithmException e) {
                                             e.printStackTrace();
                                         }
                                         try {
-                                            encryptedRecord = Encryption.encryptRecord(dataApolloResponse.data.record_by_uuid, symmKey, "AES");
+                                            encryptedRecord = Encryption.encryptRecord(originalRecord, symmKey, "AES");
+                                            decryptedRecord = Encryption.decryptRecord(encryptedRecord, symmKey, "AES");
                                         } catch (Exception e) {
+                                            Log.i("Encryption", "Got here");
                                             e.printStackTrace();
                                         }
+                                        Log.i("Encryption", "Original DOB: " + originalRecord.dob);
+                                        Log.i("Encryption", "Original UUID: " + originalRecord.uuid);
+                                        Log.i("Encryption", "Original Allergies: " + originalRecord.allergies.toString());
+                                        Log.i("Encryption", "Original Immunizations: " + originalRecord.immunizations.toString());
+                                        Log.i("Encryption", "Original Medications: " + originalRecord.medications.toString());
+                                        Log.i("Encryption", "Original Name: " + originalRecord.name.toString());
+                                        Log.i("Encryption", "Original Visit Notes: " + originalRecord.visit_notes.toString());
                                         Log.i("Encryption", "Encrypted DOB: " + encryptedRecord.dob);
                                         Log.i("Encryption", "Encrypted UUID: " + encryptedRecord.uuid);
                                         Log.i("Encryption", "Encrypted Allergies: " + encryptedRecord.allergies.toString());
@@ -116,6 +128,20 @@ public class EncryptionTest {
                                         Log.i("Encryption", "Encrypted Medications: " + encryptedRecord.medications.toString());
                                         Log.i("Encryption", "Encrypted Name: " + encryptedRecord.name.toString());
                                         Log.i("Encryption", "Encrypted Visit Notes: " + encryptedRecord.visit_notes.toString());
+                                        Log.i("Encryption", "Decrypted DOB: " + decryptedRecord.dob);
+                                        Log.i("Encryption", "Decrypted UUID: " + decryptedRecord.uuid);
+                                        Log.i("Encryption", "Decrypted Allergies: " + decryptedRecord.allergies.toString());
+                                        Log.i("Encryption", "Decrypted Immunizations: " + decryptedRecord.immunizations.toString());
+                                        Log.i("Encryption", "Decrypted Medications: " + decryptedRecord.medications.toString());
+                                        Log.i("Encryption", "Decrypted Name: " + decryptedRecord.name.toString());
+                                        Log.i("Encryption", "Decrypted Visit Notes: " + decryptedRecord.visit_notes.toString());
+                                        assert(Objects.equals(originalRecord.dob, decryptedRecord.dob));
+                                        assert(originalRecord.uuid.equals(decryptedRecord.uuid));
+                                        assert(originalRecord.allergies.equals(decryptedRecord.allergies));
+                                        assert(originalRecord.immunizations.equals(decryptedRecord.immunizations));
+                                        assert(originalRecord.medications.equals(decryptedRecord.medications));
+                                        assert(originalRecord.name.equals(decryptedRecord.name));
+                                        assert(originalRecord.visit_notes.equals(decryptedRecord.visit_notes));
                                     }
                                     @Override
                                     public void onError(@NonNull Throwable e) {

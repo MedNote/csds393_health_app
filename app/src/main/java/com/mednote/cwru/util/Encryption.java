@@ -137,49 +137,52 @@ public class Encryption {
             String fieldName = f.getName();
             switch(fieldName) {
                 case "uuid": {
-                    uuid = Arrays.toString(Encryption.symmetricEncrypt(key, ((String) f.get(record)), transformation));
+                    uuid = Arrays.toString(symmetricEncrypt(key, ((String) f.get(record)), transformation));
                     break;
                 }
                 case "name": {
                     Name temp = (Name) f.get(record);
-                    String firstName = Arrays.toString(Encryption.symmetricEncrypt(key, temp.first_name, transformation));
-                    String lastName = Arrays.toString(Encryption.symmetricEncrypt(key, temp.last_name, transformation));
+                    String firstName = Arrays.toString(symmetricEncrypt(key, temp.first_name, transformation));
+                    String lastName = Arrays.toString(symmetricEncrypt(key, temp.last_name, transformation));
                     name = new Name(firstName, lastName);
                     break;
                 }
                 case "dob": {
-                    dob = Arrays.toString(Encryption.symmetricEncrypt(key, ((String) f.get(record)), transformation));
+                    String temp = (String) f.get(record);
+                    if(temp == null || temp.equals("null")) {
+                        dob = null;
+                    } else {
+                        dob = Arrays.toString(symmetricEncrypt(key, ((String) f.get(record)), transformation));
+                    }
                     break;
                 }
                 case "allergies": {
-                    allergies = new ArrayList<String>();
                     List<String> temp = (List<String>) f.get(record);
                     for (String str : temp) {
-                        allergies.add(Arrays.toString(Encryption.symmetricEncrypt(key, str, transformation)));
+                        allergies.add(Arrays.toString(symmetricEncrypt(key, str, transformation)));
                     }
                     break;
                 }
                 case "medications": {
-                    medications = new ArrayList<String>();
                     List<String> temp = (List<String>) f.get(record);
                     for (String str : temp) {
-                        medications.add(Arrays.toString(Encryption.symmetricEncrypt(key, str, transformation)));
+                        medications.add(Arrays.toString(symmetricEncrypt(key, str, transformation)));
                     }
                     break;
                 }
                 case "immunizations": {
                     List<Immunization> temp = (List<Immunization>) f.get(record);
                     for(Immunization imm : temp) {
-                        immunizations.add(new Immunization(Arrays.toString(Encryption.symmetricEncrypt(key, imm.immunization, transformation)),
-                                Arrays.toString(Encryption.symmetricEncrypt(key, (String) imm.date, transformation))));
+                        immunizations.add(new Immunization(Arrays.toString(symmetricEncrypt(key, imm.immunization, transformation)),
+                                Arrays.toString(symmetricEncrypt(key, (String) imm.date, transformation))));
                     }
                     break;
                 }
                 case "visit_notes": {
                     List<Visit_note> temp = (List<Visit_note>) f.get(record);
                     for(Visit_note vis : temp) {
-                        visit_notes.add(new Visit_note(Arrays.toString(Encryption.symmetricEncrypt(key, vis.note, transformation)),
-                                Arrays.toString(Encryption.symmetricEncrypt(key, (String) vis.date, transformation))));
+                        visit_notes.add(new Visit_note(Arrays.toString(symmetricEncrypt(key, vis.note, transformation)),
+                                Arrays.toString(symmetricEncrypt(key, (String) vis.date, transformation))));
                     }
                     break;
                 }
@@ -188,12 +191,98 @@ public class Encryption {
                 }
             }
         }
-        Log.i("Encryption", "UUID: " + uuid);
         return new Record_by_uuid(uuid, name, dob, allergies, medications, immunizations, visit_notes);
     }
 
-    public static Record_by_uuid decryptRecord(Record_by_uuid record, Key key, String transformation) {
-        return null;
+    public static Record_by_uuid decryptRecord(Record_by_uuid record, Key key, String transformation) throws Exception {
+        String uuid = null;
+        Name name = null;
+        String dob = null;
+        List<String> allergies = new ArrayList<String>();
+        List<String> medications = new ArrayList<String>();
+        List<Immunization> immunizations = new ArrayList<Immunization>();
+        List<Visit_note> visit_notes = new ArrayList<Visit_note>();
+        for (Field f : record.getClass().getDeclaredFields()) {
+            String fieldName = f.getName();
+            switch(fieldName) {
+                case "uuid": {
+                    uuid = new String(symmetricDecrypt(key, bytesFromString((String) f.get(record)), transformation));
+                    break;
+                }
+                case "name": {
+                    Name temp = (Name) f.get(record);
+                    String firstName = new String(symmetricDecrypt(key, bytesFromString(temp.first_name), transformation));
+                    String lastName = new String(symmetricDecrypt(key, bytesFromString(temp.last_name), transformation));
+                    name = new Name(firstName, lastName);
+                    break;
+                }
+                case "dob": {
+                    String temp= (String) f.get(record);
+                    if(temp == null || temp.equals("null")) {
+                        dob = null;
+                    } else {
+                        dob = new String(symmetricDecrypt(key, bytesFromString((String) f.get(record)), transformation));
+                    }
+                    break;
+                }
+                case "allergies": {
+                    List<String> temp = (List<String>) f.get(record);
+                    for (String str : temp) {
+                        if (str == null || str.equals("null")) {
+                            allergies.add(null);
+                        } else {
+                            allergies.add(new String(symmetricDecrypt(key, bytesFromString((String) str), transformation)));
+                        }
+                    }
+                    break;
+                }
+                case "medications": {
+                    List<String> temp = (List<String>) f.get(record);
+                    for (String str : temp) {
+                        if (str == null || str.equals("null")) {
+                            medications.add(null);
+                        } else {
+                            medications.add(new String(symmetricDecrypt(key, bytesFromString((String) str), transformation)));
+                        }
+                    }
+                    break;
+                }
+                case "immunizations": {
+                    List<Immunization> temp = (List<Immunization>) f.get(record);
+                    for(Immunization imm : temp) {
+                        String decryptImm;
+                        String decryptDate;
+                        if (imm.immunization == null || imm.immunization.equals("null")) {
+                            decryptImm = null;
+                        } else {
+                            decryptImm = new String(symmetricDecrypt(key, bytesFromString(imm.immunization), transformation));
+                        }
+
+                        if(imm.date == null || imm.date.equals("null")) {
+                            decryptDate = null;
+                        } else {
+                            decryptDate = new String(symmetricDecrypt(key, bytesFromString((String) imm.date), transformation));
+                        }
+
+                        immunizations.add(new Immunization(decryptImm, decryptDate));
+                    }
+                    break;
+                }
+                case "visit_notes": {
+                    List<Visit_note> temp = (List<Visit_note>) f.get(record);
+                    for(Visit_note vis : temp) {
+                        visit_notes.add(new Visit_note(
+                                new String(symmetricDecrypt(key, bytesFromString(vis.note), transformation)),
+                                new String(symmetricDecrypt(key, bytesFromString((String) vis.date), transformation))));
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        return new Record_by_uuid(uuid, name, dob, allergies, medications, immunizations, visit_notes);
     }
 
     public static IvParameterSpec generateIv() {
@@ -211,6 +300,9 @@ public class Encryption {
      * @return byte array
      */
     public static byte[] bytesFromString(String str) {
+        if (str == null || str.equals("null")) {
+            return null;
+        }
         String[] temp = str.substring(1, str.length() - 1).split(",");
         byte[] bytes = new byte[temp.length];
         for (int i = 0, len=bytes.length; i<len; i++) {
