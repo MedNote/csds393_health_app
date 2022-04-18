@@ -2,11 +2,8 @@ package com.mednote.cwru;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.reactivestreams.Subscription;
-import org.web3j.crypto.Bip39Wallet;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.MnemonicUtils;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
@@ -30,9 +27,9 @@ import com.mednote.cwru.ethereum.EHR;
 import com.mednote.cwru.ethereum.EthereumConstants;
 import com.mednote.cwru.ethereum.Utils;
 import com.mednote.cwru.login.LoginRepository;
-import com.mednote.cwru.login.LoginServerResponse;
-import com.mednote.cwru.login.ProviderLoginDataSource;
-import com.mednote.cwru.login.SignUpServerResponse;
+import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
+import com.mednote.cwru.login.datasource.ProviderLoginDataSource;
+import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.Name;
 import com.mednote.cwru.serverapi.ServerResult;
@@ -47,13 +44,8 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -170,6 +162,7 @@ public class SmartContractUnitTest {
 
     @Test
     public void genKeyPair() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        Utils.setupBouncyCastle();
         Key[] keys = Encryption.getKeys();
         String message = "Public: " + keys[0].toString() + " private: " + keys[1].toString();
         Log.i("SmartContract", message);
