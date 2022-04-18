@@ -16,7 +16,9 @@ import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -26,6 +28,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -174,7 +177,7 @@ public class Encryption {
                     List<Immunization> temp = (List<Immunization>) f.get(record);
                     for(Immunization imm : temp) {
                         immunizations.add(new Immunization(Arrays.toString(symmetricEncrypt(key, imm.immunization, transformation)),
-                                Arrays.toString(symmetricEncrypt(key, (String) imm.date, transformation))));
+                                (String) imm.date));
                     }
                     break;
                 }
@@ -182,7 +185,7 @@ public class Encryption {
                     List<Visit_note> temp = (List<Visit_note>) f.get(record);
                     for(Visit_note vis : temp) {
                         visit_notes.add(new Visit_note(Arrays.toString(symmetricEncrypt(key, vis.note, transformation)),
-                                Arrays.toString(symmetricEncrypt(key, (String) vis.date, transformation))));
+                                (String) vis.date));
                     }
                     break;
                 }
@@ -258,13 +261,7 @@ public class Encryption {
                             decryptImm = new String(symmetricDecrypt(key, bytesFromString(imm.immunization), transformation));
                         }
 
-                        if(imm.date == null || imm.date.equals("null")) {
-                            decryptDate = null;
-                        } else {
-                            decryptDate = new String(symmetricDecrypt(key, bytesFromString((String) imm.date), transformation));
-                        }
-
-                        immunizations.add(new Immunization(decryptImm, decryptDate));
+                        immunizations.add(new Immunization(decryptImm, imm.date));
                     }
                     break;
                 }
@@ -273,7 +270,7 @@ public class Encryption {
                     for(Visit_note vis : temp) {
                         visit_notes.add(new Visit_note(
                                 new String(symmetricDecrypt(key, bytesFromString(vis.note), transformation)),
-                                new String(symmetricDecrypt(key, bytesFromString((String) vis.date), transformation))));
+                                (String) vis.date));
                     }
                     break;
                 }
@@ -283,6 +280,28 @@ public class Encryption {
             }
         }
         return new Record_by_uuid(uuid, name, dob, allergies, medications, immunizations, visit_notes);
+    }
+
+    /**
+     * Re-encrypts a record with a new symmetric key, and encrypts the key with a list of public keys.
+     * @param encryptedRecord Encrypted record
+     * @param symmKeyOld Symmetric key, that can decrypt the record
+     * @param symmKeyNew New symmetric key to encrypt the record with
+     * @param keys List of public keys to encrypt the new symmetric key with
+     * @return A map with 1 key-value pair, where the key is the newly encrypted record and the value
+     * is the list containing the symmetric key encrypted with every public key.
+     * @throws Exception
+     */
+    public static Map<Record_by_uuid, List<byte[]>> reencryptRecord(Record_by_uuid encryptedRecord, SecretKey symmKeyOld, SecretKey symmKeyNew, List<PublicKey> keys) throws Exception {
+        Record_by_uuid decryptedRecord = decryptRecord(encryptedRecord, symmKeyOld, EncryptionConstants.algorithm);
+        List<byte[]> encryptedKeys = new ArrayList<byte[]>();
+        for (PublicKey pk : keys) {
+            encryptedKeys.add(encrypt(pk, Arrays.toString(symmKeyNew.getEncoded())));
+        }
+        Record_by_uuid reencryptedRecord = encryptRecord(decryptedRecord, symmKeyNew, EncryptionConstants.algorithm);
+        Map<Record_by_uuid, List<byte[]>> recordMap = new HashMap<>();
+        recordMap.put(reencryptedRecord, encryptedKeys);
+        return recordMap;
     }
 
     public static IvParameterSpec generateIv() {
@@ -309,5 +328,9 @@ public class Encryption {
             bytes[i] = Byte.parseByte(temp[i].trim());
         }
         return bytes;
+    }
+
+    public static SecretKey bytesToKey(byte[] b) {
+        return new SecretKeySpec(b, 0, b.length, EncryptionConstants.algorithm);
     }
 }
