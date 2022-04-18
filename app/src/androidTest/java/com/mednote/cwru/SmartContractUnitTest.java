@@ -32,14 +32,18 @@ import com.mednote.cwru.ethereum.Utils;
 import com.mednote.cwru.login.LoginRepository;
 import com.mednote.cwru.login.LoginServerResponse;
 import com.mednote.cwru.login.ProviderLoginDataSource;
+import com.mednote.cwru.login.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.login.models.Name;
 import com.mednote.cwru.serverapi.ServerResult;
+import com.mednote.cwru.util.Encryption;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 import com.mednote.cwru.util.helpers.ExecutorServiceHelper;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -78,6 +82,12 @@ public class SmartContractUnitTest {
         String[] deets = Utils.createWallet(appContext, password);
         String address = deets[0];
         String walletPath = deets[1];
+        String message = "Address: " + address + " password: " + password + " mnemonic: " + deets[2];
+        Log.i("SmartContract", message);
+        //fill up ether
+        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
+        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
+        //Utils.faucetFill(web3, credentials);
     }
 
     @Test
@@ -91,6 +101,10 @@ public class SmartContractUnitTest {
         String[] deets = Utils.loadWallet(appContext, password, mnemonic);
         String address = deets[0];
         String walletPath = deets[1];
+        //fill up ether
+        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
+        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
+        //Utils.faucetFill(web3, credentials);
     }
 
     @Test
@@ -113,14 +127,72 @@ public class SmartContractUnitTest {
     }
 
     @Test
+    public void testSignUp() throws CipherException, IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        Utils.setupBouncyCastle();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        ApplicationContextHelper.getInstance().init(appContext);
+
+        // Using doctor wallet
+        String password = "admin";
+        String address = "0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2";
+        String mnemonic = "hungry hair truth vapor smooth blast swear bulb camera eager invest chronic";
+        AccountCredentials accountCredentials = new AccountCredentials(address, password, mnemonic);
+
+        // Creating new Address
+        String newAddress = "0xbb0974413561bfc3961858426ae9639d3c66ad62";
+        Key[] keys = Encryption.getKeys();
+        String message = "Public: " + keys[0].toString() + " private: " + keys[1].toString();
+        Log.i("SmartContract", message);
+
+        // Registering user
+        LoginRepository loginRepository = LoginRepository.getInstance(new ProviderLoginDataSource());
+        FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUpTask = loginRepository.signUp(new Name("Oleksii", "Fedorenko"), accountCredentials, newAddress, keys[0]);
+        signUpTask.addOnSuccessListener(new OnSuccessListener<ServerResult<SignUpServerResponse>>() {
+            @Override
+            public void onSuccess(ServerResult<SignUpServerResponse> signUpServerResponseServerResult) {
+                SignUpServerResponse signUpServerResponse = signUpServerResponseServerResult.getResult();
+                if (signUpServerResponse != null && signUpServerResponse.getTransactionReceipt() != null) {
+                    Log.i("SmartContract", "signed up");
+                }
+            }
+        });
+
+
+
+        ExecutorServiceHelper.getInstance().execute(signUpTask);
+        while (true) {
+            if (signUpTask.isComplete()) {
+                break;
+            }
+        }
+
+    }
+
+    @Test
+    public void genKeyPair() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        Key[] keys = Encryption.getKeys();
+        String message = "Public: " + keys[0].toString() + " private: " + keys[1].toString();
+        Log.i("SmartContract", message);
+
+    }
+
+    @Test
     public void testLogin() throws CipherException, IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         Utils.setupBouncyCastle();
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         ApplicationContextHelper.getInstance().init(appContext);
+
+        // Using doctor wallet
         String password = "admin";
-        String[] deets = Utils.createWallet(appContext, password);
+        String address = "0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2";
+        String mnemonic = "hungry hair truth vapor smooth blast swear bulb camera eager invest chronic";
+        AccountCredentials accountCredentials = new AccountCredentials(address, password, mnemonic);
+
+        // Logging in doctor
+        Log.i("SmartContract", "signed in");
+        // Logging in Doctor
         LoginRepository loginRepository = LoginRepository.getInstance(new ProviderLoginDataSource());
-        FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(new AccountCredentials(deets[0], password, deets[2]));
+        FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(accountCredentials);
         futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
             @Override
             public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
@@ -128,9 +200,10 @@ public class SmartContractUnitTest {
             }
         });
         ExecutorServiceHelper.getInstance().execute(futureTask);
+
         while (true) {
             if (futureTask.isComplete()) {
-//                break;
+                break;
             }
         }
 
