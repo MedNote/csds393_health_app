@@ -32,7 +32,9 @@ import com.mednote.cwru.ethereum.Utils;
 import com.mednote.cwru.login.LoginRepository;
 import com.mednote.cwru.login.LoginServerResponse;
 import com.mednote.cwru.login.ProviderLoginDataSource;
+import com.mednote.cwru.login.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.login.models.Name;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
@@ -125,19 +127,38 @@ public class SmartContractUnitTest {
         Utils.setupBouncyCastle();
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         ApplicationContextHelper.getInstance().init(appContext);
+
+        // Creating wallet
         String password = "admin";
         String[] deets = Utils.createWallet(appContext, password);
+        AccountCredentials accountCredentials = new AccountCredentials(deets[0], password, deets[2]);
+        // Registering doctor
         LoginRepository loginRepository = LoginRepository.getInstance(new ProviderLoginDataSource());
-        FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(new AccountCredentials(deets[0], password, deets[2]));
-        futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
+        FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUpTask = loginRepository.signUp(new Name("Oleksii", "Fedorenko"), accountCredentials);
+        signUpTask.addOnSuccessListener(new OnSuccessListener<ServerResult<SignUpServerResponse>>() {
             @Override
-            public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
-                Log.i("SmartContract", "Login Successful");
+            public void onSuccess(ServerResult<SignUpServerResponse> signUpServerResponseServerResult) {
+                SignUpServerResponse signUpServerResponse = signUpServerResponseServerResult.getResult();
+                if (signUpServerResponse.getAccountCredentials() != null) {
+                    Log.i("SmartContract", "signed in");
+                    // Logging in Doctor
+                    FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(accountCredentials);
+                    futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
+                        @Override
+                        public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
+                            Log.i("SmartContract", "Login Successful");
+                        }
+                    });
+                    ExecutorServiceHelper.getInstance().execute(futureTask);
+                }
             }
         });
-        ExecutorServiceHelper.getInstance().execute(futureTask);
+
+
+
+        ExecutorServiceHelper.getInstance().execute(signUpTask);
         while (true) {
-            if (futureTask.isComplete()) {
+            if (signUpTask.isComplete()) {
 //                break;
             }
         }

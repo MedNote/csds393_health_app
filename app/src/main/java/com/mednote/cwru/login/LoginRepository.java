@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.mednote.cwru.BR;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.LoggedInUser;
+import com.mednote.cwru.login.models.Name;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
@@ -90,6 +91,20 @@ public class LoginRepository {
         task.addOnSuccessListener(listenerRepository);
         return task;
     }
+
+    public FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUp(Name name, AccountCredentials accountCredentials) {
+        OnSuccessListener<ServerResult<SignUpServerResponse>> listenerRepository = new OnSuccessListener<ServerResult<SignUpServerResponse>>() {
+            @Override
+            public void onSuccess(ServerResult<SignUpServerResponse> serverResult) {
+
+            }
+        };
+        // handle login
+        FutureTaskWrapper<ServerResult<SignUpServerResponse>> task = dataSource.signUp(name, accountCredentials);
+        task.addOnSuccessListener(listenerRepository);
+        return task;
+    }
+
 
     /**
      * Interprets the serverResult
