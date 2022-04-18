@@ -1,5 +1,7 @@
 package com.mednote.cwru.login;
 
+import android.util.Log;
+
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.ethereum.EHR;
 import com.mednote.cwru.ethereum.Utils;
@@ -68,8 +70,11 @@ public abstract class LoginDataSource {
                     ContractInteraction contractInteraction = new ContractInteraction(credentials);
                     EHR contract = contractInteraction.getContract();
                     Key[] keys = Encryption.getKeys();
+                    Log.i("SmartContract", "Trying to get the RemoteFunctionCall");
                     RemoteFunctionCall<TransactionReceipt> remoteFunctionCall = userRegister(name, contract, credentials.getAddress(), keys[1].getEncoded());
+                    Log.i("SmartContract", "Trying to send the RemoteFunctionCall");
                     TransactionReceipt receipt = remoteFunctionCall.send();
+                    Log.i("SmartContract", "Got back the RemoteFunctionCall");
                     AccountCredentials newAccountCredentials = new AccountCredentials(credentials.getAddress(), accountCredentials.getPassword(), wallet_loaded[2]);
                     return new SignUpServerResult(new SignUpServerResponse(receipt, name, newAccountCredentials));
                 } catch (Exception e) {

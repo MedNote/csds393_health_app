@@ -80,6 +80,8 @@ public class SmartContractUnitTest {
         String[] deets = Utils.createWallet(appContext, password);
         String address = deets[0];
         String walletPath = deets[1];
+        String message = "Address: " + address + " password: " + password + " mnemonic: " + deets[2];
+        Log.i("SmartContract", message);
         //fill up ether
         //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
         //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
@@ -130,8 +132,10 @@ public class SmartContractUnitTest {
 
         // Creating wallet
         String password = "admin";
-        String[] deets = Utils.createWallet(appContext, password);
-        AccountCredentials accountCredentials = new AccountCredentials(deets[0], password, deets[2]);
+//        String[] deets = Utils.createWallet(appContext, password);
+//        AccountCredentials accountCredentials = new AccountCredentials(deets[0], password, deets[2]);
+        String mnemonic = "hungry hair truth vapor smooth blast swear bulb camera eager invest chronic";
+        AccountCredentials accountCredentials = new AccountCredentials("0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2", password, mnemonic);
         // Registering doctor
         LoginRepository loginRepository = LoginRepository.getInstance(new ProviderLoginDataSource());
         FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUpTask = loginRepository.signUp(new Name("Oleksii", "Fedorenko"), accountCredentials);
