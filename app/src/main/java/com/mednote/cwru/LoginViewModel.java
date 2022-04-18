@@ -1,9 +1,23 @@
 package com.mednote.cwru;
 
+import android.app.Activity;
+import android.util.Log;
+
 import androidx.databinding.Bindable;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mednote.cwru.base.BaseViewModel;
 import com.mednote.cwru.ethereum.EHR;
+import com.mednote.cwru.ethereum.Utils;
+import com.mednote.cwru.login.LoginRepository;
+import com.mednote.cwru.login.datasource.LoginDataSource;
+import com.mednote.cwru.login.datasource.PatientLoginDataSource;
+import com.mednote.cwru.login.datasource.ProviderLoginDataSource;
+import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
+import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.serverapi.ServerResult;
+import com.mednote.cwru.util.FutureTaskWrapper;
+import com.mednote.cwru.util.helpers.ExecutorServiceHelper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +35,10 @@ public class LoginViewModel extends BaseViewModel {
         password = "";
         doctor = false;
         loginStatus = LoginStatus.logged_out;
+        LoginRepository loginRepository = LoginRepository.getInstance(null);
+        if (loginRepository.isLoggedIn()) {
+            setLoginStatus(LoginStatus.logged_in);
+        }
     }
 
     @Override
@@ -68,6 +86,11 @@ public class LoginViewModel extends BaseViewModel {
         notifyPropertyChanged(BR.password);
     }
 
+    public void setDoctor(Boolean doctor) {
+        this.doctor = doctor;
+        notifyPropertyChanged(BR.doctor);
+    }
+
     public void setLoginStatus(LoginStatus loginStatus) {
         this.loginStatus = loginStatus;
         notifyPropertyChanged(BR.loginStatus);
@@ -75,22 +98,40 @@ public class LoginViewModel extends BaseViewModel {
 
     public void login() {
         setLoginStatus(LoginStatus.pending);
-        try {
 //        TODO: finish login with blockchain
-            Runnable loggingIn = new Runnable() {
-                @Override
-                public void run() {
-//                    EHR ehr =
-                }
-                // TODO: login with password and mnemonic
-                // TODO: get wallet address (ass uuid) from credentials object
-                // TODO: user patientExists to check if wallet address exists
-            };
-            TimeUnit.SECONDS.sleep(2);
-            setLoginStatus(LoginStatus.logged_in);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // TODO: remove hard code
+        String address = getWalletID();
+//        String password = "admin";
+//        String address = "0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2";
+//        String mnemonic = "hungry hair truth vapor smooth blast swear bulb camera eager invest chronic";
+        Utils.setupBouncyCastle();
+        AccountCredentials accountCredentials = new AccountCredentials(address, password, mnemonic);
+        LoginDataSource loginDataSource = null;
+        if (doctor) {
+            loginDataSource = new ProviderLoginDataSource();
+        } else {
+            loginDataSource = new PatientLoginDataSource();
         }
+        LoginRepository loginRepository = LoginRepository.getInstance(loginDataSource);
+        FutureTaskWrapper<ServerResult<LoginServerResponse>> futureTask = loginRepository.login(accountCredentials);
+        futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
+            @Override
+            public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
+                ((Activity) applicationContext).runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (loginServerResponseServerResult.getResult().getUserExists()) {
+                            setLoginStatus(LoginStatus.logged_in);
+                        } else {
+                            setLoginStatus(LoginStatus.error);
+                        }
+                    }
+                });
+
+            }
+        });
+        ExecutorServiceHelper.getInstance().execute(futureTask);
 
     }
 }

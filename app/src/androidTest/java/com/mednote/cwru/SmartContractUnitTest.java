@@ -100,6 +100,26 @@ public class SmartContractUnitTest {
     }
 
     @Test
+    public void testWalletLoadPrivateKeyEqual() throws Exception {
+        Utils.setupBouncyCastle();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        // Using doctor wallet
+        String password = "admin";
+//        String address = "0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2";
+        String mnemonic = "test copy seed flash fix more roof abandon poem bread reform net";
+        String[] deets1 = Utils.loadWallet(appContext, password, mnemonic);
+        Log.i("SmartContract", deets1[3]);
+        String[] deets2 = Utils.loadWallet(appContext, password, mnemonic);
+        Log.i("SmartContract", deets2[3]);
+        assertEquals(deets1[3], deets2[3]);
+        //fill up ether
+        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
+        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
+        //Utils.faucetFill(web3, credentials);
+    }
+
+    @Test
     public void testWalletRecreate() throws Exception {
         Utils.setupBouncyCastle();
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();

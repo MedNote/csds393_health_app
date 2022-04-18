@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_login.xml" value="0.18020833333333333" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/content_main.xml" value="0.28306159420289856" />
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.28940217391304346" />
