@@ -169,6 +169,14 @@ public class SmartContractUnitTest {
     }
 
     @Test
+    public void genKeyPair() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        Key[] keys = Encryption.getKeys();
+        String message = "Public: " + keys[0].toString() + " private: " + keys[1].toString();
+        Log.i("SmartContract", message);
+
+    }
+
+    @Test
     public void testLogin() throws CipherException, IOException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         Utils.setupBouncyCastle();
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
