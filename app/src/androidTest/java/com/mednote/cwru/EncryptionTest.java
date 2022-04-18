@@ -28,11 +28,17 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
@@ -45,6 +51,7 @@ import javax.crypto.spec.PSource;
 import javax.xml.bind.DatatypeConverter;
 
 import com.mednote.cwru.RecordByUuidQuery.*;
+import com.mednote.cwru.util.EncryptionConstants;
 
 import io.reactivex.Single;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -57,11 +64,11 @@ public class EncryptionTest {
         Security.addProvider(new BouncyCastleProvider());
 
         //symmetric key encryption
-        SecretKey symmKey = Encryption.createSymmetricKey("AES");
+        SecretKey symmKey = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
         Log.i("Encryption", "Symmetric key: " + DatatypeConverter.printHexBinary(symmKey.getEncoded()));
-        byte[] ciphertext = Encryption.symmetricEncrypt(symmKey, "Hello, world!", "AES");
+        byte[] ciphertext = Encryption.symmetricEncrypt(symmKey, "Hello, world!", EncryptionConstants.algorithm);
         Log.i("Encryption", "Ciphertext: " + new String(ciphertext));
-        String plaintext = new String(Encryption.symmetricDecrypt(symmKey, ciphertext, "AES"));
+        String plaintext = new String(Encryption.symmetricDecrypt(symmKey, ciphertext, EncryptionConstants.algorithm));
         Log.i("Encryption", "Decrypted plaintext: " + plaintext);
     }
 
@@ -111,7 +118,6 @@ public class EncryptionTest {
                                             encryptedRecord = Encryption.encryptRecord(originalRecord, symmKey, "AES");
                                             decryptedRecord = Encryption.decryptRecord(encryptedRecord, symmKey, "AES");
                                         } catch (Exception e) {
-                                            Log.i("Encryption", "Got here");
                                             e.printStackTrace();
                                         }
                                         Log.i("Encryption", "Original DOB: " + originalRecord.dob);
@@ -150,5 +156,59 @@ public class EncryptionTest {
                                 }
         );
 
+    }
+
+    @Test
+    public void testRecordReencryption() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        ApolloClient.Builder l = new ApolloClient.Builder();
+        ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+
+        ApolloCall<Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
+        Single<ApolloResponse<Data>> queryResponse = Rx2Apollo.single(queryCall);
+
+        List<PublicKey> publicKeys = new ArrayList<>();
+        List<PrivateKey> privateKeys = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Key[] keys = Encryption.getKeys();
+            publicKeys.add((PublicKey) keys[0]);
+            privateKeys.add((PrivateKey) keys[1]);
+        }
+
+
+        SecretKey oldKey = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
+
+        SecretKey newKey = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
+
+
+        queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<Data>>() {
+                                    @Override
+                                    public void onSuccess(@NonNull ApolloResponse<RecordByUuidQuery.Data> dataApolloResponse) {
+                                        Record_by_uuid originalRecord = dataApolloResponse.data.record_by_uuid;
+                                        Record_by_uuid encryptedRecord = null;
+                                        Record_by_uuid reencryptedRecord = null;
+                                        List<byte[]> encryptedKeys = null;
+                                        try {
+                                            encryptedRecord = Encryption.encryptRecord(originalRecord, oldKey, "AES");
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            Map<Record_by_uuid, List<byte[]>> map = Encryption.reencryptRecord(encryptedRecord, oldKey, newKey, publicKeys);
+                                            reencryptedRecord = new ArrayList<Record_by_uuid>(map.keySet()).get(0);
+                                            encryptedKeys = (List<byte[]>) map.values().toArray()[0];
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        //TODO: Not done
+
+
+
+                                    }
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                        Log.e("minnie",e.getMessage());
+                                    }
+                                }
+        );
     }
 }

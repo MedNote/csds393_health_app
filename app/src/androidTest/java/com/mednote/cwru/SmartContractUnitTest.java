@@ -78,10 +78,6 @@ public class SmartContractUnitTest {
         String[] deets = Utils.createWallet(appContext, password);
         String address = deets[0];
         String walletPath = deets[1];
-        //fill up ether
-        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
-        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
-        //Utils.faucetFill(web3, credentials);
     }
 
     @Test
@@ -95,10 +91,6 @@ public class SmartContractUnitTest {
         String[] deets = Utils.loadWallet(appContext, password, mnemonic);
         String address = deets[0];
         String walletPath = deets[1];
-        //fill up ether
-        //Web3j web3 = Utils.getWeb3("https://mainnet.infura.io/v3/6fbf9fccb0db473dafa741602c69eab0");
-        //Credentials credentials = WalletUtils.loadCredentials(password, walletPath);
-        //Utils.faucetFill(web3, credentials);
     }
 
     @Test
