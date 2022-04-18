@@ -31,7 +31,6 @@ import com.mednote.cwru.ethereum.EthereumConstants;
 import com.mednote.cwru.ethereum.Utils;
 import com.mednote.cwru.login.LoginRepository;
 import com.mednote.cwru.login.LoginServerResponse;
-import com.mednote.cwru.login.PatientLoginDataSource;
 import com.mednote.cwru.login.ProviderLoginDataSource;
 import com.mednote.cwru.login.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
@@ -51,7 +50,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import io.reactivex.disposables.Disposable;
