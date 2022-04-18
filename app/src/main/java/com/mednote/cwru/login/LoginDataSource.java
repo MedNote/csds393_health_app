@@ -33,9 +33,6 @@ public abstract class LoginDataSource {
         return new FutureTaskWrapper<ServerResult<LoginServerResponse>>(new Callable<ServerResult<LoginServerResponse>>() {
             @Override
             public ServerResult<LoginServerResponse> call() {
-                // TODO: login with password and mnemonic
-                // TODO: get wallet address (ass uuid) from credentials object
-                // TODO: user patientExists to check if wallet address exists
                 Utils.setupBouncyCastle();
                 String[] wallet_loaded = new String[0];
                 try {
@@ -55,33 +52,31 @@ public abstract class LoginDataSource {
             }
         });
     }
-    public FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUp(Name name, AccountCredentials accountCredentials) {
+    public FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUp(Name name, AccountCredentials signerCredentials, String newAddress, Key publicKey) {
         return new FutureTaskWrapper<ServerResult<SignUpServerResponse>>(new Callable<ServerResult<SignUpServerResponse>>() {
             @Override
             public ServerResult<SignUpServerResponse> call() {
-                // TODO: sign up with password and mnemonic
-                // TODO: get wallet address (ass uuid) from credentials object
-                // TODO: user patientExists to check if wallet address exists
                 Utils.setupBouncyCastle();
-                String[] wallet_loaded = new String[0];
+                String[] signerWallet = new String[0];
+                String[] newWallet = new String[0];
                 try {
-                    wallet_loaded = Utils.loadWallet(ApplicationContextHelper.get(), accountCredentials.getPassword(), accountCredentials.getMnemonic());
-                    Credentials credentials = WalletUtils.loadCredentials(accountCredentials.getPassword(), wallet_loaded[1]);
+                    // Instantiate EHR as a signer
+                    signerWallet = Utils.loadWallet(ApplicationContextHelper.get(), signerCredentials.getPassword(), signerCredentials.getMnemonic());
+                    Credentials credentials = WalletUtils.loadCredentials(signerCredentials.getPassword(), signerWallet[1]);
                     ContractInteraction contractInteraction = new ContractInteraction(credentials);
                     EHR contract = contractInteraction.getContract();
-                    Key[] keys = Encryption.getKeys();
+                    // Sign up new user
                     Log.i("SmartContract", "Trying to get the RemoteFunctionCall");
-                    RemoteFunctionCall<TransactionReceipt> remoteFunctionCall = userRegister(name, contract, credentials.getAddress(), keys[1].getEncoded());
+                    RemoteFunctionCall<TransactionReceipt> remoteFunctionCall = userRegister(name, contract, newAddress, publicKey.getEncoded());
                     Log.i("SmartContract", "Trying to send the RemoteFunctionCall");
                     TransactionReceipt receipt = remoteFunctionCall.send();
                     Log.i("SmartContract", "Got back the RemoteFunctionCall");
-                    AccountCredentials newAccountCredentials = new AccountCredentials(credentials.getAddress(), accountCredentials.getPassword(), wallet_loaded[2]);
-                    return new SignUpServerResult(new SignUpServerResponse(receipt, name, newAccountCredentials));
+                    return new SignUpServerResult(new SignUpServerResponse(receipt, name, newAddress));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                return new SignUpServerResult(new SignUpServerResponse(null, name, null));
+                return new SignUpServerResult(new SignUpServerResponse(null, name, newAddress));
             }
         });
     }

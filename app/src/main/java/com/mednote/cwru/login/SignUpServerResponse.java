@@ -7,13 +7,13 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class SignUpServerResponse {
     private TransactionReceipt transactionReceipt;
-    private AccountCredentials accountCredentials;
+    private String accountAddress;
     private Name name;
 
-    public SignUpServerResponse(TransactionReceipt transactionReceipt, Name name, AccountCredentials accountCredentials) {
+    public SignUpServerResponse(TransactionReceipt transactionReceipt, Name name, String accountAddress) {
         this.transactionReceipt = transactionReceipt;
         this.name = name;
-        this.accountCredentials = accountCredentials;
+        this.accountAddress = accountAddress;
     }
 
     public TransactionReceipt getTransactionReceipt() {
@@ -24,8 +24,8 @@ public class SignUpServerResponse {
         return name;
     }
 
-    public AccountCredentials getAccountCredentials() {
-        return accountCredentials;
+    public String getAccountAddress() {
+        return accountAddress;
     }
 
     public void setTransactionReceipt(TransactionReceipt transactionReceipt) {
@@ -36,7 +36,7 @@ public class SignUpServerResponse {
         this.name = name;
     }
 
-    public void setAccountCredentials(AccountCredentials accountCredentials) {
-        this.accountCredentials = accountCredentials;
+    public void setAccountAddress(String accountAddress) {
+        this.accountAddress = accountAddress;
     }
 }

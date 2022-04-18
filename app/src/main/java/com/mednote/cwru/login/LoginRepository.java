@@ -13,6 +13,8 @@ import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 
+import java.security.Key;
+
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
@@ -92,7 +94,7 @@ public class LoginRepository {
         return task;
     }
 
-    public FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUp(Name name, AccountCredentials accountCredentials) {
+    public FutureTaskWrapper<ServerResult<SignUpServerResponse>> signUp(Name name, AccountCredentials accountCredentials, String newAddress, Key publicKey) {
         OnSuccessListener<ServerResult<SignUpServerResponse>> listenerRepository = new OnSuccessListener<ServerResult<SignUpServerResponse>>() {
             @Override
             public void onSuccess(ServerResult<SignUpServerResponse> serverResult) {
@@ -100,7 +102,7 @@ public class LoginRepository {
             }
         };
         // handle login
-        FutureTaskWrapper<ServerResult<SignUpServerResponse>> task = dataSource.signUp(name, accountCredentials);
+        FutureTaskWrapper<ServerResult<SignUpServerResponse>> task = dataSource.signUp(name, accountCredentials, newAddress, publicKey);
         task.addOnSuccessListener(listenerRepository);
         return task;
     }
