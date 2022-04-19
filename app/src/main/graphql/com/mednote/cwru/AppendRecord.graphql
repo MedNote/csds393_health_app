@@ -1,4 +1,4 @@
-mutation AppendRecord($uuid: String, $name: nameIn, $allergies: [String], $medications: [String], $immunizations: [immunizationIn], $visit_notes: [noteIn]){
+mutation AppendRecord($uuid: String!, $name: nameIn, $allergies: [String], $medications: [String], $immunizations: [immunizationIn], $visit_notes: [noteIn]){
   appendRecord(
     uuid: $uuid,
     name: $name,

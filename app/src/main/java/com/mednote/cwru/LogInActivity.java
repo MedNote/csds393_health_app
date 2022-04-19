@@ -41,8 +41,29 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
 //      setContentView(R.layout.activity_login);
       Toolbar toolbar = findViewById(R.id.main_toolbar);
       setSupportActionBar(toolbar);
-      ApplicationContextHelper.getInstance().init(getApplicationContext());
 
+      Button loginButton = (Button) findViewById(R.id.proceed_to_verification_button);
+      loginButton.setOnClickListener(this);
+
+      // Add observable listeners
+      getLoginViewModel().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+         @Override
+         public void onPropertyChanged(Observable sender, int propertyId) {
+            if (propertyId == BR.loginStatus) {
+               String toastText = "Status is " + getLoginViewModel().getLoginStatus();
+               Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
+               if (getLoginViewModel().getLoginStatus() == LoginStatus.logged_in) {
+                  Intent new_intent = new Intent(LogInActivity.this, MainActivity.class);
+                  startActivity(new_intent);
+               }
+            }
+         }
+      });
+      // Check login status
+      getLoginViewModel().checkLoginStatus();
+   }
+
+   public void getDataFromServer() {
       ApolloClient.Builder l = new ApolloClient.Builder();
       ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
 
@@ -61,23 +82,6 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                                  }
                               }
       );
-      Button loginButton = (Button) findViewById(R.id.proceed_to_verification_button);
-      loginButton.setOnClickListener(this);
-
-      // Add observable listeners
-      getLoginViewModel().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-         @Override
-         public void onPropertyChanged(Observable sender, int propertyId) {
-            if (propertyId == BR.loginStatus) {
-               String toastText = "Status is " + getLoginViewModel().getLoginStatus();
-               Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
-               if (getLoginViewModel().getLoginStatus() == LoginStatus.logged_in) {
-                  Intent new_intent = new Intent(LogInActivity.this, MainActivity.class);
-                  startActivity(new_intent);
-               }
-            }
-         }
-      });
    }
 
    public LoginViewModel getLoginViewModel() {

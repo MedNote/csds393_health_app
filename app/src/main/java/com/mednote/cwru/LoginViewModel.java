@@ -35,6 +35,9 @@ public class LoginViewModel extends BaseViewModel {
         password = "";
         doctor = false;
         loginStatus = LoginStatus.logged_out;
+    }
+
+    public void checkLoginStatus() {
         LoginRepository loginRepository = LoginRepository.getInstance(null);
         if (loginRepository.isLoggedIn()) {
             setLoginStatus(LoginStatus.logged_in);
@@ -98,8 +101,6 @@ public class LoginViewModel extends BaseViewModel {
 
     public void login() {
         setLoginStatus(LoginStatus.pending);
-//        TODO: finish login with blockchain
-        // TODO: remove hard code
         String address = getWalletID();
 //        String password = "admin";
 //        String address = "0xea06a63b68149a4e1749bbfe1ce06f8d8c762cf2";

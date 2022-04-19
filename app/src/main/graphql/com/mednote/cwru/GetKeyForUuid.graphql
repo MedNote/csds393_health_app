@@ -1,0 +1,8 @@
+query GetKeyForUuid($uuid: String!){
+  get_key_for_uuid(
+    uuid: $uuid
+  ){
+    uuid
+    symmetric_key
+  }
+}
