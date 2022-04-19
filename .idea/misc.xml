@@ -15,6 +15,9 @@
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_user.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/user_fragment.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.16666666666666666" />
+        <entry key="app/src/main/res/layout/activity_doctor_note_add.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_doctor_note_view.xml" value="0.2798913043478261" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.19300911854103345" />
       </map>
     </option>
   </component>
