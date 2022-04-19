@@ -1,5 +1,7 @@
 package com.mednote.cwru;
 
+import static org.junit.Assert.assertEquals;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -21,11 +23,13 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -33,7 +37,9 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,27 +126,6 @@ public class EncryptionTest {
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        Log.i("Encryption", "Original DOB: " + originalRecord.dob);
-                                        Log.i("Encryption", "Original UUID: " + originalRecord.uuid);
-                                        Log.i("Encryption", "Original Allergies: " + originalRecord.allergies.toString());
-                                        Log.i("Encryption", "Original Immunizations: " + originalRecord.immunizations.toString());
-                                        Log.i("Encryption", "Original Medications: " + originalRecord.medications.toString());
-                                        Log.i("Encryption", "Original Name: " + originalRecord.name.toString());
-                                        Log.i("Encryption", "Original Visit Notes: " + originalRecord.visit_notes.toString());
-                                        Log.i("Encryption", "Encrypted DOB: " + encryptedRecord.dob);
-                                        Log.i("Encryption", "Encrypted UUID: " + encryptedRecord.uuid);
-                                        Log.i("Encryption", "Encrypted Allergies: " + encryptedRecord.allergies.toString());
-                                        Log.i("Encryption", "Encrypted Immunizations: " + encryptedRecord.immunizations.toString());
-                                        Log.i("Encryption", "Encrypted Medications: " + encryptedRecord.medications.toString());
-                                        Log.i("Encryption", "Encrypted Name: " + encryptedRecord.name.toString());
-                                        Log.i("Encryption", "Encrypted Visit Notes: " + encryptedRecord.visit_notes.toString());
-                                        Log.i("Encryption", "Decrypted DOB: " + decryptedRecord.dob);
-                                        Log.i("Encryption", "Decrypted UUID: " + decryptedRecord.uuid);
-                                        Log.i("Encryption", "Decrypted Allergies: " + decryptedRecord.allergies.toString());
-                                        Log.i("Encryption", "Decrypted Immunizations: " + decryptedRecord.immunizations.toString());
-                                        Log.i("Encryption", "Decrypted Medications: " + decryptedRecord.medications.toString());
-                                        Log.i("Encryption", "Decrypted Name: " + decryptedRecord.name.toString());
-                                        Log.i("Encryption", "Decrypted Visit Notes: " + decryptedRecord.visit_notes.toString());
                                         assert(Objects.equals(originalRecord.dob, decryptedRecord.dob));
                                         assert(originalRecord.uuid.equals(decryptedRecord.uuid));
                                         assert(originalRecord.allergies.equals(decryptedRecord.allergies));
@@ -148,6 +133,8 @@ public class EncryptionTest {
                                         assert(originalRecord.medications.equals(decryptedRecord.medications));
                                         assert(originalRecord.name.equals(decryptedRecord.name));
                                         assert(originalRecord.visit_notes.equals(decryptedRecord.visit_notes));
+                                        Log.i("Encryption", "Original Hash: " + originalRecord.hashCode());
+                                        Log.i("Encryption", "Unencrypted Hash: " + decryptedRecord.hashCode());
                                     }
                                     @Override
                                     public void onError(@NonNull Throwable e) {
@@ -186,6 +173,7 @@ public class EncryptionTest {
                                         Record_by_uuid originalRecord = dataApolloResponse.data.record_by_uuid;
                                         Record_by_uuid encryptedRecord = null;
                                         Record_by_uuid reencryptedRecord = null;
+                                        Record_by_uuid decryptedRecord = null;
                                         List<byte[]> encryptedKeys = null;
                                         try {
                                             encryptedRecord = Encryption.encryptRecord(originalRecord, oldKey, "AES");
@@ -199,9 +187,22 @@ public class EncryptionTest {
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        //TODO: Not done
-
-
+                                        byte[] decryptedKey = null;
+                                        try {
+                                            decryptedKey = Encryption.decrypt(privateKeys.get(0), encryptedKeys.get(0));
+                                        } catch (Exception e) {
+                                            Log.i("Encryption", "Got here");
+                                            e.printStackTrace();
+                                        }
+                                        decryptedKey = Encryption.bytesFromString(new String(decryptedKey));
+                                        Log.i("Encryption", Arrays.toString(newKey.getEncoded()));
+                                        Log.i("Encryption", Arrays.toString(decryptedKey));
+                                        assertEquals(Arrays.toString(decryptedKey), Arrays.toString(newKey.getEncoded()));
+                                        try {
+                                            decryptedRecord = Encryption.decryptRecord(reencryptedRecord, Encryption.bytesToKey(decryptedKey), EncryptionConstants.algorithm);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
 
                                     }
                                     @Override
@@ -211,4 +212,18 @@ public class EncryptionTest {
                                 }
         );
     }
+
+    @Test
+    public void randomBullshit() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, NoSuchProviderException {
+        SecretKey key = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
+        Key[] keys = Encryption.getKeys();
+        RSAPublicKey pubKey = (RSAPublicKey) keys[0];
+        RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keys[1];
+        Log.i("Encryption", "Symmetric key: " + Arrays.toString(key.getEncoded()));
+        byte[] encrypted = Encryption.encrypt(pubKey, Arrays.toString(key.getEncoded()));
+        byte[] decrypted = Encryption.decrypt(privKey, encrypted);
+        Log.i("Encryption", "Symmetric key: " + Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
+        assertEquals(Arrays.toString(key.getEncoded()), Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
+    }
+
 }
