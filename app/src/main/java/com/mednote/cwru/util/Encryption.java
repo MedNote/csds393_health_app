@@ -11,8 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAKeyGenParameterSpec;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -346,8 +352,28 @@ public class Encryption {
         return hexString.toString();
     }
 
-    public byte[] recordHash(Record_by_uuid rec) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        return null;
+    public static String keyToEncoded (Key key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] data = key.getEncoded();
+        String base64encoded = new String(Base64.getEncoder().encode(data));
+        return base64encoded;
     }
+
+    public static PublicKey encodedToPubKey (String encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] publicBytes = Base64.getDecoder().decode(encoded);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey pubKey = keyFactory.generatePublic(keySpec);
+        return pubKey;
+    }
+
+    public static PrivateKey encodedToPrivKey (String encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] privateBytes = Base64.getDecoder().decode(encoded);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privKey = keyFactory.generatePrivate(keySpec);
+        return privKey;
+    }
+
+
+
 }
