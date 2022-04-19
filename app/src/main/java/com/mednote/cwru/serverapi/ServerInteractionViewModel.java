@@ -1,5 +1,6 @@
 package com.mednote.cwru.serverapi;
 
+import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -35,12 +36,14 @@ public class ServerInteractionViewModel extends BaseViewModel {
     private DataRequestStatus keyRequestStatus;
     private LoggedInUser loggedInUser;
     private ApolloClient client;
+    private String requestUuid;
 
-    public ServerInteractionViewModel(LoggedInUser loggedInUser) {
+    public ServerInteractionViewModel(LoggedInUser loggedInUser, String requestUuid) {
         this.loggedInUser = loggedInUser;
+        this.requestUuid = requestUuid;
 
         ApolloClient.Builder l = new ApolloClient.Builder();
-        ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+        client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
     }
 
     @Bindable
@@ -53,6 +56,10 @@ public class ServerInteractionViewModel extends BaseViewModel {
         return keyRequestStatus;
     }
 
+    public String getRequestUuid() {
+        return requestUuid;
+    }
+
     public LoggedInUser getLoggedInUser() {
         return loggedInUser;
     }
@@ -63,22 +70,39 @@ public class ServerInteractionViewModel extends BaseViewModel {
 
     public void setDataRequestStatus(DataRequestStatus dataRequestStatus) {
         this.dataRequestStatus = dataRequestStatus;
-        notifyPropertyChanged(BR.dataRequestStatus);
+        ((Activity) applicationContext).runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                notifyPropertyChanged(BR.dataRequestStatus);
+            }
+        });
     }
 
     public void setKeyRequestStatus(DataRequestStatus keyRequestStatus) {
         this.keyRequestStatus = keyRequestStatus;
-        notifyPropertyChanged(BR.keyRequestStatus);
+
+        ((Activity) applicationContext).runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                notifyPropertyChanged(BR.keyRequestStatus);
+            }
+        });
     }
 
     public void setLoggedInUser(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
     }
 
-    public void getSymmetricKey(String uuid) {
+    public void setRequestUuid(String requestUuid) {
+        this.requestUuid = requestUuid;
+    }
+
+    public void getSymmetricKey() {
         setKeyRequestStatus(DataRequestStatus.initiated);
 
-        ApolloCall<GetKeyForUuidQuery.Data> queryCall = client.query(new GetKeyForUuidQuery(uuid));
+        ApolloCall<GetKeyForUuidQuery.Data> queryCall = client.query(new GetKeyForUuidQuery(requestUuid));
         Single<ApolloResponse<GetKeyForUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
         queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<GetKeyForUuidQuery.Data>>() {
@@ -105,9 +129,9 @@ public class ServerInteractionViewModel extends BaseViewModel {
         setKeyRequestStatus(DataRequestStatus.request_sent);
     }
 
-    public void getDataFromServer(String uuid) {
+    public void getDataFromServer() {
         setDataRequestStatus(DataRequestStatus.initiated);
-        ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery(uuid));
+        ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery(requestUuid));
         Single<ApolloResponse<RecordByUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
         queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {

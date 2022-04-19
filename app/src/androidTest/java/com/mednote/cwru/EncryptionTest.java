@@ -1,5 +1,7 @@
 package com.mednote.cwru;
 
+import static org.junit.Assert.assertEquals;
+
 import android.content.Context;
 import android.util.Log;
 

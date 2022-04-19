@@ -96,7 +96,13 @@ public class LoginViewModel extends BaseViewModel {
 
     public void setLoginStatus(LoginStatus loginStatus) {
         this.loginStatus = loginStatus;
-        notifyPropertyChanged(BR.loginStatus);
+        ((Activity) applicationContext).runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                notifyPropertyChanged(BR.loginStatus);
+            }
+        });
     }
 
     public void login() {
@@ -118,17 +124,11 @@ public class LoginViewModel extends BaseViewModel {
         futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
             @Override
             public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
-                ((Activity) applicationContext).runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (loginServerResponseServerResult.getResult().getUserExists()) {
-                            setLoginStatus(LoginStatus.logged_in);
-                        } else {
-                            setLoginStatus(LoginStatus.error);
-                        }
-                    }
-                });
+                if (loginServerResponseServerResult.getResult().getUserExists()) {
+                    setLoginStatus(LoginStatus.logged_in);
+                } else {
+                    setLoginStatus(LoginStatus.error);
+                }
 
             }
         });

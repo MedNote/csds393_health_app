@@ -18,9 +18,14 @@ import static org.junit.Assert.*;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.apollographql.apollo3.ApolloCall;
+import com.apollographql.apollo3.ApolloClient;
+import com.apollographql.apollo3.api.ApolloResponse;
+import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.ethereum.EHR;
@@ -32,6 +37,7 @@ import com.mednote.cwru.login.datasource.ProviderLoginDataSource;
 import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.Name;
+import com.mednote.cwru.serverapi.DataRequestStatus;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.Encryption;
 import com.mednote.cwru.util.FutureTaskWrapper;
@@ -46,6 +52,9 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import io.reactivex.Single;
+import io.reactivex.observers.DisposableSingleObserver;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -243,6 +252,111 @@ public class SmartContractUnitTest {
         EHR ehr = EHR.load(EthereumConstants.contractAddress, web3, credentials, new DefaultGasProvider());
         EthGetTransactionReceipt tr = web3.ethGetTransactionReceipt("0x2696baf4fa0c08599817e45eab14100efb642b6468696f6af70df3d9de7f3bde").send();
         TransactionReceipt receipt = tr.getResult();
+    }
+
+    @Test
+    public void testGettingSymmetricKey() throws ExecutionException, InterruptedException, IOException {
+        ApolloClient.Builder l = new ApolloClient.Builder();
+        ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+        String requestUuid = "0xa99818ba06798cbe402882e035ee62ca47f41f75";
+
+        ApolloCall<GetKeyForUuidQuery.Data> queryCall = client.query(new GetKeyForUuidQuery(requestUuid));
+        Single<ApolloResponse<GetKeyForUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
+
+        queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<GetKeyForUuidQuery.Data>>() {
+                                    @Override
+                                    public void onSuccess(@NonNull ApolloResponse<GetKeyForUuidQuery.Data> dataApolloResponse) {
+                                        if (dataApolloResponse.data != null) {
+                                            GetKeyForUuidQuery.Get_key_for_uuid getKeyForUuid = dataApolloResponse.data.get_key_for_uuid;
+                                            // TODO: decrypt key
+//                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
+                                        }
+                                        Log.d("GraphQL", String.valueOf(dataApolloResponse.data));
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                        Log.d("GraphQL",e.getMessage());
+                                    }
+                                }
+        );
+
+        while (true) {
+//            if (futureTask.isComplete()) {
+//                break;
+//            }
+        }
+    }
+
+    @Test
+    public void testSettingSymmetricKey() throws ExecutionException, InterruptedException, IOException {
+        ApolloClient.Builder l = new ApolloClient.Builder();
+        ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+        String requestUuid = "0xa99818ba06798cbe402882e035ee62ca47f41f75";
+        String symmetricKey = "aaaaaa";
+
+        ApolloCall<AddKeyForUuidMutation.Data> queryCall = client.mutation(new AddKeyForUuidMutation(requestUuid, symmetricKey));
+        Single<ApolloResponse<AddKeyForUuidMutation.Data>> queryResponse = Rx2Apollo.single(queryCall);
+
+        queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<AddKeyForUuidMutation.Data>>() {
+                                    @Override
+                                    public void onSuccess(@NonNull ApolloResponse<AddKeyForUuidMutation.Data> dataApolloResponse) {
+                                        if (dataApolloResponse.data != null) {
+                                            AddKeyForUuidMutation.Add_key_for_uuid addKeyForUuid = dataApolloResponse.data.add_key_for_uuid;
+                                            // TODO: decrypt key
+//                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
+                                        }
+                                        Log.d("GraphQL", String.valueOf(dataApolloResponse.data));
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                        Log.d("GraphQL",e.getMessage());
+                                    }
+                                }
+        );
+
+        while (true) {
+//            if (futureTask.isComplete()) {
+//                break;
+//            }
+        }
+    }
+
+    @Test
+    public void testAddingSymmetricKey() throws ExecutionException, InterruptedException, IOException {
+        ApolloClient.Builder l = new ApolloClient.Builder();
+        ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
+        String requestUuid = "0xa99818ba06798cbe402882e035ee62ca47f41f75";
+        String symmetricKey = "aaaaaa";
+
+        ApolloCall<AddKeyForUuidMutation.Data> queryCall = client.mutation(new AddKeyForUuidMutation(requestUuid, symmetricKey));
+        Single<ApolloResponse<AddKeyForUuidMutation.Data>> queryResponse = Rx2Apollo.single(queryCall);
+
+        queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<AddKeyForUuidMutation.Data>>() {
+                                    @Override
+                                    public void onSuccess(@NonNull ApolloResponse<AddKeyForUuidMutation.Data> dataApolloResponse) {
+                                        if (dataApolloResponse.data != null) {
+                                            AddKeyForUuidMutation.Add_key_for_uuid addKeyForUuid = dataApolloResponse.data.add_key_for_uuid;
+                                            Log.i("GraphQL", addKeyForUuid.toString());
+                                            // TODO: decrypt key
+//                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
+                                        }
+                                        Log.d("GraphQL", String.valueOf(dataApolloResponse.data));
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                        Log.d("GraphQL",e.getMessage());
+                                    }
+                                }
+        );
+
+        while (true) {
+//            if (futureTask.isComplete()) {
+//                break;
+//            }
+        }
     }
 
     @Test

@@ -19,6 +19,10 @@ public class LoggedInUser implements Serializable {
 
     public LoggedInUser(AccountCredentials accountCredentials) {
         this.accountCredentials = accountCredentials;
+        this.privateKey = null;
+        this.publicKey = null;
+        this.symmetricKey = null;
+        this.accountData = null;
     }
 
     public AccountCredentials getAccountCredentials() {
