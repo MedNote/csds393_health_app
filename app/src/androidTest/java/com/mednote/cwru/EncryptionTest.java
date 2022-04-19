@@ -13,6 +13,7 @@ import com.apollographql.apollo3.ApolloCall;
 import com.apollographql.apollo3.ApolloClient;
 import com.apollographql.apollo3.api.ApolloResponse;
 import com.apollographql.apollo3.rx2.Rx2Apollo;
+import com.google.gson.Gson;
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.util.Encryption;
 
@@ -36,6 +37,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.MGF1ParameterSpec;
@@ -58,6 +60,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.mednote.cwru.RecordByUuidQuery.*;
 import com.mednote.cwru.util.EncryptionConstants;
+
+import junit.framework.AssertionFailedError;
 
 import io.reactivex.Single;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -214,7 +218,7 @@ public class EncryptionTest {
     }
 
     @Test
-    public void randomBullshit() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, NoSuchProviderException {
+    public void testEncryptingSymmetricKey() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, NoSuchProviderException {
         SecretKey key = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
         Key[] keys = Encryption.getKeys();
         RSAPublicKey pubKey = (RSAPublicKey) keys[0];
@@ -224,6 +228,22 @@ public class EncryptionTest {
         byte[] decrypted = Encryption.decrypt(privKey, encrypted);
         Log.i("Encryption", "Symmetric key: " + Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
         assertEquals(Arrays.toString(key.getEncoded()), Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
+    }
+
+    @Test
+    public void testKeyEncodings() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException {
+        Key[] keys = Encryption.getKeys();
+        String pubEnc = Encryption.keyToEncoded(keys[0]);
+        String privEnc = Encryption.keyToEncoded(keys[1]);
+        Key pubKey = Encryption.encodedToPubKey(pubEnc);
+        Key privKey = Encryption.encodedToPrivKey(privEnc);
+        assertEquals(keys[0], pubKey);
+        assertEquals(keys[1], privKey);
+        Log.i("Encryption", String.valueOf(keys[0].hashCode()));
+        Log.i("Encryption", String.valueOf(pubKey.hashCode()));
+        Log.i("Encryption", String.valueOf(keys[1].hashCode()));
+        Log.i("Encryption", String.valueOf(privKey.hashCode()));
+
     }
 
 }
