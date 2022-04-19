@@ -63,6 +63,22 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DoctorNoteAddActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MedNote.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DoctorNoteViewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MedNote.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
