@@ -8,21 +8,19 @@
         <entry key="..\:/CodingProjects/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.28940217391304346" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/drawable/style_button_blue.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_doctor_note_add.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_doctor_note_view.xml" value="0.22" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_intro.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_signup.xml" value="0.12" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_user.xml" value="0.1" />
+        <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/activity_wallet.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/user_fragment.xml" value="0.1" />
         <entry key="..\:/Users/ianpa/Desktop/swe/csds393_health_app/app/src/main/res/layout/wearable_fragment.xml" value="0.16666666666666666" />
         <entry key="app/src/main/res/layout/activity_doctor_note_add.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_doctor_note_view.xml" value="0.2798913043478261" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.19300911854103345" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.14990942028985507" />
-        <entry key="app/src/main/res/layout/activity_user.xml" value="0.19300911854103345" />
-        <entry key="app/src/main/res/layout/content_main.xml" value="0.2609375" />
-        <entry key="app/src/main/res/layout/user_fragment.xml" value="0.275" />
-        <entry key="app/src/main/res/layout/wearable_fragment.xml" value="0.38315217391304346" />
       </map>
     </option>
   </component>

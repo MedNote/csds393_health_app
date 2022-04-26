@@ -8,16 +8,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.mednote.cwru.BR;
 import com.mednote.cwru.MainActivity;
 import com.mednote.cwru.R;
+import com.mednote.cwru.UserFragment;
 import com.mednote.cwru.databinding.WearableFragmentBinding;
 
 import java.util.ArrayList;
@@ -81,13 +84,19 @@ public class WearableFragment extends Fragment implements View.OnClickListener {
         getWearableViewModel().addOnPropertyChangedCallback(onPropertyChangedCallback);
         getGoogleLoginViewModel().addOnPropertyChangedCallback(onPropertyChangedCallback);
 
+        Button loginButton = (Button) getView().findViewById(R.id.wearable_button_back);
+        loginButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         int viewClicked = v.getId();
         if (viewClicked == R.id.wearable_button_back) {
-
+            Fragment thirdFragment = new UserFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.nav_host_fragment , thirdFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else if (viewClicked == R.id.wearable_button_google_fit) {
             getWearableViewModel().requestWearableData();
         }

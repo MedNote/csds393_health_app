@@ -16,6 +16,7 @@ import androidx.databinding.Observable;
 
 import com.apollographql.apollo3.ApolloCall;
 import com.apollographql.apollo3.api.ApolloResponse;
+import com.apollographql.apollo3.api.Operation;
 import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.mednote.cwru.base.BaseActivity;
 import com.mednote.cwru.base.PermissionRequestHandler;
@@ -46,7 +47,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
       ApolloClient.Builder l = new ApolloClient.Builder();
       ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
 
-      ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
+      ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("111-111"));
       Single<ApolloResponse<RecordByUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
       queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {
