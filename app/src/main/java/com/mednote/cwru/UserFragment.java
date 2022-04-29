@@ -1,6 +1,8 @@
 package com.mednote.cwru;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -12,9 +14,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.mednote.cwru.databinding.UserFragmentBinding;
 import com.mednote.cwru.databinding.WearableFragmentBinding;
+import com.mednote.cwru.googlefit.WearableFragment;
 
 public class UserFragment extends Fragment implements View.OnClickListener {
 
@@ -39,8 +43,8 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
+        Button loginButton = (Button) getView().findViewById(R.id.status_tv);
+        loginButton.setOnClickListener(this);
     }
 
     public UserViewModel getmViewModel() {
@@ -49,6 +53,13 @@ public class UserFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
+      int viewClicked = view.getId();
+      if (viewClicked == R.id.status_tv) {
+          Fragment thirdFragment = new WearableFragment();
+          FragmentTransaction transaction = getFragmentManager().beginTransaction();
+          transaction.replace(R.id.nav_host_fragment , thirdFragment);
+          transaction.addToBackStack(null);
+          transaction.commit();
+      }
     }
 }

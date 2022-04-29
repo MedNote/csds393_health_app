@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="viewmodel" type="com.mednote.cwru.DoctorNoteAddViewModel"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#dcf3fe">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Doctor Note"
+                android:textAlignment="center"
+                android:textSize="48dp"
+                android:textColor="@color/black"
+                android:layout_margin="16dp"/>
+
+            <EditText
+                android:id="@+id/name_tv"
+                android:text="@={viewmodel.name}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="Name"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <EditText
+                android:id="@+id/dob_tv"
+                android:text="@={viewmodel.dob}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="DOB"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <EditText
+                android:id="@+id/allergies_tv"
+                android:text="@={viewmodel.allergie}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="Allergie"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <EditText
+                android:id="@+id/medications_tv"
+                android:text="@={viewmodel.medication}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="Medication"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <EditText
+                android:id="@+id/immunizations_tv"
+                android:text="@={viewmodel.immunization}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="Immunization"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <EditText
+                android:id="@+id/notes_tv"
+                android:text="@={viewmodel.notes}"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_margin="16dp"
+                android:padding="16dp"
+                android:hint="Notes"
+                android:gravity="top|left"
+                android:background="@color/browser_actions_bg_grey" />
+
+            <Button
+                android:id="@+id/add_btn"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:background="@drawable/style_button_blue"
+                android:textSize="16dp"
+                android:text="add"
+                android:textColor="@color/white"
+                android:layout_margin="16dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

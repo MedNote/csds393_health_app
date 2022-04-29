@@ -73,15 +73,11 @@ input nameIn {
 
 input immunizationIn {
   immunization: String
-
-  date: DateTime
 }
 
 
 input noteIn {
   note: String
-
-  date: DateTime
 }
 
 schema {
