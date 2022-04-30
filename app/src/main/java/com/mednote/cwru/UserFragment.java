@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,10 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         Button loginButton = (Button) getView().findViewById(R.id.status_tv);
         loginButton.setOnClickListener(this);
+        Button addBtn = (Button) getView().findViewById(R.id.go_to_add_record_btn);
+        addBtn.setOnClickListener(this);
+        Button viewBtn = (Button) getView().findViewById(R.id.go_to_view_record_btn);
+        viewBtn.setOnClickListener(this);
     }
 
     public UserViewModel getmViewModel() {
@@ -61,5 +66,13 @@ public class UserFragment extends Fragment implements View.OnClickListener {
           transaction.addToBackStack(null);
           transaction.commit();
       }
+        if (viewClicked == R.id.go_to_add_record_btn) {
+            Intent intent = new Intent(getActivity(), DoctorNoteAddActivity.class);
+            startActivity(intent);
+        }
+        if (viewClicked == R.id.go_to_view_record_btn) {
+            Intent intent = new Intent(getActivity(), DoctorNoteViewActivity.class);
+            startActivity(intent);
+        }
     }
 }

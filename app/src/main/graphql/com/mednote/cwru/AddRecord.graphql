@@ -1,0 +1,27 @@
+mutation AddRecord($uuid: String, $name: nameIn, $allergies: [String], $medications: [String], $immunizations: [immunizationIn], $visit_notes: [noteIn]){
+    addRecord(
+        uuid: $uuid,
+        name: $name,
+        allergies: $allergies,
+        medications: $medications,
+        immunizations: $immunizations,
+        visit_notes: $visit_notes
+    ){
+        uuid
+        name{
+            first_name
+            last_name
+        }
+        dob
+        allergies
+        medications
+        immunizations{
+            immunization
+            date
+        }
+        visit_notes{
+            note
+            date
+        }
+    }
+}
