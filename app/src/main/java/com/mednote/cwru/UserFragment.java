@@ -58,7 +58,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         addBtn.setOnClickListener(this);
         Button viewBtn = (Button) getView().findViewById(R.id.go_to_view_record_btn);
         viewBtn.setOnClickListener(this);
-        getView().findViewById(R.id.editview).setOnClickListener(this);
+        getView().findViewById(R.id.proceed_to_verification_button).setOnClickListener(this);
 
         // Updating UI
 
@@ -95,7 +95,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
           transaction.addToBackStack(null);
           transaction.commit();
       }
-      if (viewClicked == R.id.editview) {
+      if (viewClicked == R.id.proceed_to_verification_button) {
           Intent new_intent = new Intent(getActivity(), DoctorNoteAddActivity.class);
           startActivity(new_intent);
       }
