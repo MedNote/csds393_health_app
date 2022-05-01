@@ -1,5 +1,6 @@
-package com.mednote.cwru.login;
+package com.mednote.cwru.login.exchangetypes;
 
+import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
 import com.mednote.cwru.serverapi.ServerResult;
 
 public class SignUpServerResult extends ServerResult<SignUpServerResponse> {

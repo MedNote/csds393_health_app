@@ -4,6 +4,8 @@ type RootQueryType {
   record_by_uuid(uuid: String): MedNote
 
   record_after_date(uuid: String, date: DateTime): MedNote
+
+  get_key_for_uuid(uuid: String): SymmetricKey
 }
 
 type MedNote {
@@ -20,6 +22,12 @@ type MedNote {
   immunizations: [immunization]
 
   visit_notes: [note]
+}
+
+type SymmetricKey {
+  uuid: String
+
+  symmetric_key: String
 }
 
 type name {
@@ -51,6 +59,10 @@ type Mutation {
   updateRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
 
   appendRecord(uuid: String, name: nameIn, dob: String, allergies: [String], medications: [String], immunizations: [immunizationIn], visit_notes: [noteIn]): MedNote
+
+  add_key_for_uuid(uuid: String, symmetric_key: String): SymmetricKey
+
+  set_key_for_uuid(uuid: String, symmetric_key: String): SymmetricKey
 }
 
 input nameIn {

@@ -21,7 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize Context Singleton
-        ApplicationContextHelper.getInstance().init(getApplicationContext());
+        ApplicationContextHelper.getInstance().init(this);
     }
 
     // region Requesting Permissions

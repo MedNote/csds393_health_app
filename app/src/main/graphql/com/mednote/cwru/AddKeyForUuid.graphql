@@ -1,0 +1,9 @@
+mutation AddKeyForUuid($uuid: String!, $symmetric_key: String!){
+  add_key_for_uuid(
+    uuid: $uuid,
+    symmetric_key: $symmetric_key
+  ){
+    uuid
+    symmetric_key
+  }
+}

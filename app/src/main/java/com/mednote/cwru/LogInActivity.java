@@ -1,15 +1,12 @@
 package com.mednote.cwru;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.Observable;
@@ -20,12 +17,11 @@ import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.mednote.cwru.base.BaseActivity;
 import com.mednote.cwru.base.PermissionRequestHandler;
 import com.mednote.cwru.databinding.ActivityLoginBinding;
-import com.mednote.cwru.databinding.WearableFragmentBinding;
+import com.mednote.cwru.login.LoginViewModel;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 import com.apollographql.apollo3.ApolloClient;
 
 import io.reactivex.Single;
-import io.reactivex.observers.DisposableSingleObserver;
 
 public class LogInActivity extends BaseActivity implements View.OnClickListener {
 
@@ -49,19 +45,19 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
       ApolloCall<RecordByUuidQuery.Data> queryCall = client.query(new RecordByUuidQuery("dalsdfasjdfsdf"));
       Single<ApolloResponse<RecordByUuidQuery.Data>> queryResponse = Rx2Apollo.single(queryCall);
 
-      queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {
-                                 @Override
-                                 public void onSuccess(@NonNull ApolloResponse<RecordByUuidQuery.Data> dataApolloResponse) {
-                                    Log.d("minnie",dataApolloResponse.data.toString());
-                                 }
-
-                                 @Override
-                                 public void onError(@NonNull Throwable e) {
-                                    Log.d("minnie",e.getMessage());
-                                 }
-                              }
-      );
-      Button loginButton = (Button) findViewById(R.id.proceed_to_verification_button);
+//      queryResponse.subscribe(new DisposableSingleObserver<ApolloResponse<RecordByUuidQuery.Data>>() {
+//                                 @Override
+//                                 public void onSuccess(@NonNull ApolloResponse<RecordByUuidQuery.Data> dataApolloResponse) {
+//                                    Log.d("minnie",dataApolloResponse.data.toString());
+//                                 }
+//
+//                                 @Override
+//                                 public void onError(@NonNull Throwable e) {
+//                                    Log.d("minnie",e.getMessage());
+//                                 }
+//                              }
+//      );
+      Button loginButton = (Button) findViewById(R.id.editview);
       loginButton.setOnClickListener(this);
 
       // Add observable listeners
@@ -78,6 +74,8 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
             }
          }
       });
+      // Check login status
+      getLoginViewModel().checkLoginStatus();
    }
 
    public LoginViewModel getLoginViewModel() {
@@ -112,7 +110,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
    @Override
    public void onClick(View view) {
       int viewClicked = view.getId();
-      if (viewClicked == R.id.proceed_to_verification_button) {
+      if (viewClicked == R.id.editview) {
          getLoginViewModel().login();
       }
    }

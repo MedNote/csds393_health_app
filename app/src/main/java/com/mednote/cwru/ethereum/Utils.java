@@ -72,7 +72,7 @@ public class Utils {
         walletDir = new File(walletPath);
         Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
         Log.i("SmartContract", "New wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
-        return new String[] {credentials.getAddress(), walletPath, mnemonic};
+        return new String[] {credentials.getAddress(), walletPath, mnemonic, credentials.getEcKeyPair().getPrivateKey().toString(16)};
     }
 
     public static String[] loadWallet(Context c, String password, String mnemonic) throws CipherException, IOException {
@@ -84,7 +84,7 @@ public class Utils {
         walletDir = new File(walletPath);
         Credentials credentials = WalletUtils.loadBip39Credentials(password, mnemonic);
         Log.i("SmartContract", "Existing wallet with address " + credentials.getAddress() + " created at " + walletPath + ".");
-        return new String[] {credentials.getAddress(), walletPath, mnemonic};
+        return new String[] {credentials.getAddress(), walletPath, mnemonic, credentials.getEcKeyPair().getPrivateKey().toString(16)};
     }
 
     public static void faucetFill(Web3j web3, Credentials c) throws Exception {
