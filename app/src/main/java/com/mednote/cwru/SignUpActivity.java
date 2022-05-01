@@ -2,28 +2,20 @@ package com.mednote.cwru;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.Observable;
 
 import com.mednote.cwru.base.BaseActivity;
-import com.apollographql.apollo3.rx2.Rx2Apollo;
 import com.apollographql.apollo3.*;
 import com.mednote.cwru.base.PermissionRequestHandler;
 import com.mednote.cwru.databinding.ActivitySignupBinding;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
-
-
-
-import io.reactivex.Single;
-import io.reactivex.observers.DisposableSingleObserver;
 
 public class SignUpActivity extends BaseActivity implements View.OnClickListener  {
 
@@ -41,7 +33,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         setSupportActionBar(toolbar);
         ApplicationContextHelper.getInstance().init(getApplicationContext());
 
-        Button registerButton = (Button) findViewById(R.id.proceed_to_verification_button);
+        Button registerButton = (Button) findViewById(R.id.editview);
         registerButton.setOnClickListener(this);
 
         // Add observable listeners
@@ -97,7 +89,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
         int viewClicked = view.getId();
-        if (viewClicked == R.id.proceed_to_verification_button) {
+        if (viewClicked == R.id.editview) {
             getSignUpViewModel().signup();
         }
     }

@@ -1,4 +1,4 @@
-package com.mednote.cwru;
+package com.mednote.cwru.login;
 
 import android.app.Activity;
 import android.util.Log;
@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.databinding.Bindable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.mednote.cwru.BR;
+import com.mednote.cwru.LoginStatus;
 import com.mednote.cwru.base.BaseViewModel;
 import com.mednote.cwru.ethereum.EHR;
 import com.mednote.cwru.ethereum.Utils;

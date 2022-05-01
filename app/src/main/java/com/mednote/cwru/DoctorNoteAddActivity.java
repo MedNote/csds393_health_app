@@ -21,6 +21,10 @@ import com.google.android.gms.common.api.Api;
 import com.mednote.cwru.base.BaseActivity;
 import com.mednote.cwru.base.PermissionRequestHandler;
 import com.mednote.cwru.databinding.ActivityDoctorNoteAddBinding;
+import com.mednote.cwru.login.LoginRepository;
+import com.mednote.cwru.login.models.AccountData;
+import com.mednote.cwru.login.models.LoggedInUser;
+import com.mednote.cwru.login.models.Note;
 import com.mednote.cwru.type.DateTime;
 import com.mednote.cwru.type.ImmunizationIn;
 import com.mednote.cwru.type.NameIn;
@@ -94,10 +98,18 @@ public class DoctorNoteAddActivity extends BaseActivity implements View.OnClickL
 
             String dob = doctorNoteAddViewModel.getDob();
 
-            List<String> allergies = Arrays.asList(doctorNoteAddViewModel.getAllergie().split(","));
-            List<String> medications = Arrays.asList(doctorNoteAddViewModel.getMedication().split(","));
-
-            String[] immunizations = doctorNoteAddViewModel.getImmunization().split(",");
+            List<String> allergies = null;
+            if (doctorNoteAddViewModel.getAllergie() != null) {
+                allergies = Arrays.asList(doctorNoteAddViewModel.getAllergie().split(","));
+            }
+            List<String> medications = null;
+            if (doctorNoteAddViewModel.getMedication() != null) {
+                medications = Arrays.asList(doctorNoteAddViewModel.getMedication().split(","));
+            }
+            String[] immunizations = new String[0];
+            if (doctorNoteAddViewModel.getImmunization() != null) {
+                immunizations = doctorNoteAddViewModel.getImmunization().split(",");
+            }
             ArrayList<ImmunizationIn> immunizationList = new ArrayList<ImmunizationIn>();
             LocalTime timeNow = LocalTime.now();
             for (int i = 0; i < immunizations.length; i++) {
@@ -110,11 +122,20 @@ public class DoctorNoteAddActivity extends BaseActivity implements View.OnClickL
                 noteList.add(new NoteIn(new Optional.Present<>(notes[i])));
             }
 
+
+            LoginRepository loginRepository = LoginRepository.getInstance(null);
+            LoggedInUser loggedInUser = loginRepository.getLoggedInUser();
+            AccountData accountData = loggedInUser.getAccountData();
+
             ApolloClient.Builder l = new ApolloClient.Builder();
             ApolloClient client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
             ApolloCall<AppendRecordMutation.Data> queryCall = client.mutation(new AppendRecordMutation(
-                    new Optional.Present<>("dalsdfasjdfsdf"), // todo parameterize uuid
+                    loggedInUser.getUuid(),
                     new Optional.Present<>(nameIn),
+//                    new Optional.Present<>(accountData.getAllergies()),
+//                    new Optional.Present<>(accountData.getMedications()),
+//                    new Optional.Present<>(accountData.getImmunizations()),
+//                    new Optional.Present<List<AppendRecordMutation.Visit_note>>(getNotesApollo(accountData.getNotes()))
                     new Optional.Present<>(allergies),
                     new Optional.Present<>(medications),
                     new Optional.Present<>(immunizationList),
@@ -147,5 +168,15 @@ public class DoctorNoteAddActivity extends BaseActivity implements View.OnClickL
 
         }
     }
+
+
+    public List<AppendRecordMutation.Visit_note> getNotesApollo(List<Note> notes) {
+        List<AppendRecordMutation.Visit_note> visit_notes = new ArrayList<>();
+        for (Note note : notes) {
+            visit_notes.add(new AppendRecordMutation.Visit_note(note.getNote(), note.getDate()));
+        }
+        return visit_notes;
+    }
+
 
 }

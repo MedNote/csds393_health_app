@@ -46,13 +46,16 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 if (propertyId == BR.keyRequestStatus) {
-                    if (getServerInteractionViewModel().getKeyRequestStatus() == DataRequestStatus.data_received) {
+                    if (getServerInteractionViewModel().getKeyRequestStatus() == DataRequestStatus.data_received &&
+                            getServerInteractionViewModel().getDataRequestStatus() == DataRequestStatus.no_request) {
                         getServerInteractionViewModel().getDataFromServer();
+                        loginRepository.saveUser();
                     }
                 }
                 if (propertyId == BR.dataRequestStatus) {
                     if (getServerInteractionViewModel().getDataRequestStatus() == DataRequestStatus.data_received) {
                         // TODO: update UI
+                        loginRepository.saveUser();
                     }
                 }
             }
@@ -61,6 +64,8 @@ public class MainActivity extends BaseActivity {
         // Request symmetric key
         if (loggedInUser.getSymmetricKey() == null) {
             getServerInteractionViewModel().getSymmetricKey();
+        } else {
+            getServerInteractionViewModel().getDataFromServer();
         }
 
     }

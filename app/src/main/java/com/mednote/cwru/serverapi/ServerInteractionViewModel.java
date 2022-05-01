@@ -20,12 +20,20 @@ import com.mednote.cwru.ethereum.Utils;
 import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
 import com.mednote.cwru.login.exchangetypes.LoginServerResult;
 import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.login.models.AccountData;
+import com.mednote.cwru.login.models.Immunization;
 import com.mednote.cwru.login.models.LoggedInUser;
+import com.mednote.cwru.login.models.Name;
+import com.mednote.cwru.login.models.Note;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.core.RemoteFunctionCall;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -41,6 +49,8 @@ public class ServerInteractionViewModel extends BaseViewModel {
     public ServerInteractionViewModel(LoggedInUser loggedInUser, String requestUuid) {
         this.loggedInUser = loggedInUser;
         this.requestUuid = requestUuid;
+        this.dataRequestStatus = DataRequestStatus.no_request;
+        this.keyRequestStatus = DataRequestStatus.no_request;
 
         ApolloClient.Builder l = new ApolloClient.Builder();
         client = l.serverUrl("http://ec2-18-233-36-202.compute-1.amazonaws.com:4000/graphql").build();
@@ -111,7 +121,7 @@ public class ServerInteractionViewModel extends BaseViewModel {
                                         if (dataApolloResponse.data != null) {
                                             GetKeyForUuidQuery.Get_key_for_uuid getKeyForUuid = dataApolloResponse.data.get_key_for_uuid;
                                             // TODO: decrypt key
-//                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
+                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
                                             setKeyRequestStatus(DataRequestStatus.data_received);
                                         } else {
                                             setKeyRequestStatus(DataRequestStatus.error);
@@ -141,6 +151,12 @@ public class ServerInteractionViewModel extends BaseViewModel {
                                             RecordByUuidQuery.Record_by_uuid recordByUuid = dataApolloResponse.data.record_by_uuid;
                                             // TODO: decrypt data
 //                                            getLoggedInUser().setSymmetricKey(getKeyForUuid.symmetric_key);
+                                            try {
+                                                AccountData accountData = decryptServerData(recordByUuid);
+                                                getLoggedInUser().setAccountData(accountData);
+                                            } catch (IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            }
                                             setKeyRequestStatus(DataRequestStatus.data_received);
                                         } else {
                                             setKeyRequestStatus(DataRequestStatus.error);
@@ -150,7 +166,7 @@ public class ServerInteractionViewModel extends BaseViewModel {
 
                                     @Override
                                     public void onError(@NonNull Throwable e) {
-                                        Log.d("minnie",e.getMessage());
+                                        Log.d("GraphQL",e.getMessage());
                                         setDataRequestStatus(DataRequestStatus.error);
                                     }
                                 }
@@ -158,8 +174,97 @@ public class ServerInteractionViewModel extends BaseViewModel {
         setDataRequestStatus(DataRequestStatus.request_sent);
     }
 
-    public void decryptServerData() {
+    public AccountData decryptServerData(RecordByUuidQuery.Record_by_uuid record) throws IllegalAccessException {
+        // TODO: actually decrypt Data
+        String uuid = null;
+        Name name = null;
+        String dob = null;
+        List<String> allergies = new ArrayList<String>();
+        List<String> medications = new ArrayList<String>();
+        List<Immunization> immunizations = new ArrayList<Immunization>();
+        List<Note> visit_notes = new ArrayList<Note>();
+        for (Field f : record.getClass().getDeclaredFields()) {
+            String fieldName = f.getName();
+            switch (fieldName) {
+                case "uuid": {
+                    uuid = (String) f.get(record);
+                    break;
+                }
+                case "name": {
+                    RecordByUuidQuery.Name temp = (RecordByUuidQuery.Name) f.get(record);
+                    String firstName = temp.first_name;
+                    String lastName = temp.last_name;
+                    name = new Name(firstName, lastName);
+                    break;
+                }
+                case "dob": {
+                    String temp = (String) f.get(record);
+                    if (temp == null || temp.equals("null")) {
+                        dob = null;
+                    } else {
+                        dob = (String) f.get(record);
+                    }
+                    break;
+                }
+                case "allergies": {
+                    List<String> temp = (List<String>) f.get(record);
+                    for (String str : temp) {
+                        if (str == null || str.equals("null")) {
+                            allergies.add(null);
+                        } else {
+                            allergies.add((String) str);
+                        }
+                    }
+                    break;
+                }
+                case "medications": {
+                    List<String> temp = (List<String>) f.get(record);
+                    for (String str : temp) {
+                        if (str == null || str.equals("null")) {
+                            medications.add(null);
+                        } else {
+                            medications.add((String) str);
+                        }
+                    }
+                    break;
+                }
+                case "immunizations": {
+                    List<RecordByUuidQuery.Immunization> temp = (List<RecordByUuidQuery.Immunization>) f.get(record);
+                    for (RecordByUuidQuery.Immunization imm : temp) {
+                        String decryptImm;
+                        String decryptDate;
+                        if (imm.immunization == null || imm.immunization.equals("null")) {
+                            decryptImm = null;
+                        } else {
+                            decryptImm = imm.immunization;
+                        }
 
+                        immunizations.add(new Immunization(decryptImm, (String) imm.date));
+                    }
+                    break;
+                }
+                case "visit_notes": {
+                    List<RecordByUuidQuery.Visit_note> temp = (List<RecordByUuidQuery.Visit_note>) f.get(record);
+                    for (RecordByUuidQuery.Visit_note vis : temp) {
+                        visit_notes.add(new Note(
+                                new String(vis.note),
+                                (String) vis.date));
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        AccountData accountData = new AccountData(uuid);
+        accountData.setDob(dob);
+        accountData.setAllergies(allergies);
+        accountData.setName(name);
+        accountData.setImmunizations(immunizations);
+        accountData.setMedications(medications);
+        accountData.setNotes(visit_notes);
+        return accountData;
     }
 
     public void encryptServerData() {

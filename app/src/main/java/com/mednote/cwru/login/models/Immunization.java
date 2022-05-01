@@ -26,4 +26,10 @@ public class Immunization implements Serializable {
     public void setImmunization(String immunization) {
         this.immunization = immunization;
     }
+
+    @Override
+    public String toString() {
+        return "immunization='" + immunization + '\'' +
+                ", date='" + date;
+    }
 }

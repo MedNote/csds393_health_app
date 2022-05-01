@@ -1,8 +1,13 @@
 package com.mednote.cwru;
 
+import android.widget.ArrayAdapter;
+
 import androidx.databinding.Bindable;
 
 import com.mednote.cwru.base.BaseViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DoctorNoteViewViewModel extends BaseViewModel {
 
@@ -11,7 +16,12 @@ public class DoctorNoteViewViewModel extends BaseViewModel {
     private String allergie;
     private String medication;
     private String immunization;
-    private String notes;
+    private List<String> notes;
+    private ArrayAdapter<String> notesAdapter;
+
+    public DoctorNoteViewViewModel() {
+        notes = new ArrayList<>();
+    }
 
     protected void instantiatePermissions() {
 
@@ -43,8 +53,13 @@ public class DoctorNoteViewViewModel extends BaseViewModel {
     }
 
     @Bindable
-    public String getNotes() {
+    public List<String> getNotes() {
         return notes;
+    }
+
+    @Bindable
+    public ArrayAdapter<String> getNotesAdapter() {
+        return notesAdapter;
     }
 
     public void setName(String name) {
@@ -72,10 +87,13 @@ public class DoctorNoteViewViewModel extends BaseViewModel {
         notifyPropertyChanged(BR.immunization);
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(List<String> notes) {
         this.notes = notes;
         notifyPropertyChanged(BR.notes);
     }
 
-
+    public void setNotesAdapter(ArrayAdapter<String> notesAdapter) {
+        this.notesAdapter = notesAdapter;
+        notifyPropertyChanged(BR.notesAdapter);
+    }
 }
