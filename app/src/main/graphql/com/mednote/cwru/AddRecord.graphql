@@ -1,5 +1,5 @@
 mutation AddRecord($uuid: String, $name: nameIn, $allergies: [String], $medications: [String], $immunizations: [immunizationIn], $visit_notes: [noteIn]){
-    appendRecord(
+    addRecord(
         uuid: $uuid,
         name: $name,
         allergies: $allergies,
