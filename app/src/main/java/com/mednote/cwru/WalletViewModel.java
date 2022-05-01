@@ -17,6 +17,7 @@ public class WalletViewModel extends BaseViewModel  {
         fname = "";
         lname = "";
         rsaKey = "";
+        mnemonic = "";
     }
 
     @Override
