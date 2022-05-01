@@ -72,14 +72,12 @@ public class EncryptionTest {
     @Test
     public void testSymmetricEncrypt() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-
         //symmetric key encryption
         SecretKey symmKey = Encryption.createSymmetricKey(EncryptionConstants.algorithm);
-        Log.i("Encryption", "Symmetric key: " + DatatypeConverter.printHexBinary(symmKey.getEncoded()));
-        byte[] ciphertext = Encryption.symmetricEncrypt(symmKey, "Hello, world!", EncryptionConstants.algorithm);
-        Log.i("Encryption", "Ciphertext: " + new String(ciphertext));
-        String plaintext = new String(Encryption.symmetricDecrypt(symmKey, ciphertext, EncryptionConstants.algorithm));
-        Log.i("Encryption", "Decrypted plaintext: " + plaintext);
+        String plaintext = "Hello, world!";
+        byte[] ciphertext = Encryption.symmetricEncrypt(symmKey, plaintext, EncryptionConstants.algorithm);
+        String decrypted = new String(Encryption.symmetricDecrypt(symmKey, ciphertext, EncryptionConstants.algorithm));
+        assertEquals(plaintext, decrypted);
     }
 
     @Test
@@ -87,19 +85,13 @@ public class EncryptionTest {
         Key[] keys = Encryption.getKeys();
         RSAPublicKey pubKey = (RSAPublicKey) keys[0];
         RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keys[1];
-        Log.i("Encryption", "Public Key modulus: " + pubKey.getModulus());
-        Log.i("Encryption", "Public Key exponent: " + pubKey.getPublicExponent());
-        Log.i("Encryption", "Private Key p: " + privKey.getPrimeExponentP());
-        Log.i("Encryption", "Private Key q: " + privKey.getPrimeExponentQ());
-        Log.i("Encryption", "Private Key exponent: " + privKey.getPrivateExponent());
         OAEPParameterSpec spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
-        byte[] temp = Encryption.encrypt(keys[0], "Hello, world!");
+        String plaintext = "Hello, world!";
+        byte[] temp = Encryption.encrypt(keys[0], plaintext);
         String temp2 = Arrays.toString(temp);
         byte[] temp3 = Encryption.bytesFromString(temp2);
-        Log.i("Encryption", "String Ciphertext: " + temp2);
-        Log.i("Encryption", "Ciphertext: " + Arrays.toString(temp3));
-        Log.i("Encryption", "Ciphertext: " + Arrays.toString(temp));
-        Log.i("Encryption", "Decrypted plaintext: " + new String(Encryption.decrypt(keys[1], temp)));
+        String decrypted = new String(Encryption.decrypt(keys[1], temp));
+        assertEquals(plaintext, decrypted);
     }
 
     @Test
@@ -130,15 +122,8 @@ public class EncryptionTest {
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        assert(Objects.equals(originalRecord.dob, decryptedRecord.dob));
-                                        assert(originalRecord.uuid.equals(decryptedRecord.uuid));
-                                        assert(originalRecord.allergies.equals(decryptedRecord.allergies));
-                                        assert(originalRecord.immunizations.equals(decryptedRecord.immunizations));
-                                        assert(originalRecord.medications.equals(decryptedRecord.medications));
-                                        assert(originalRecord.name.equals(decryptedRecord.name));
-                                        assert(originalRecord.visit_notes.equals(decryptedRecord.visit_notes));
-                                        Log.i("Encryption", "Original Hash: " + originalRecord.hashCode());
-                                        Log.i("Encryption", "Unencrypted Hash: " + decryptedRecord.hashCode());
+                                        assertEquals(originalRecord.dob, decryptedRecord.dob);
+                                        assertEquals(originalRecord.hashCode(), decryptedRecord.hashCode());
                                     }
                                     @Override
                                     public void onError(@NonNull Throwable e) {
@@ -195,12 +180,9 @@ public class EncryptionTest {
                                         try {
                                             decryptedKey = Encryption.decrypt(privateKeys.get(0), encryptedKeys.get(0));
                                         } catch (Exception e) {
-                                            Log.i("Encryption", "Got here");
                                             e.printStackTrace();
                                         }
                                         decryptedKey = Encryption.bytesFromString(new String(decryptedKey));
-                                        Log.i("Encryption", Arrays.toString(newKey.getEncoded()));
-                                        Log.i("Encryption", Arrays.toString(decryptedKey));
                                         assertEquals(Arrays.toString(decryptedKey), Arrays.toString(newKey.getEncoded()));
                                         try {
                                             decryptedRecord = Encryption.decryptRecord(reencryptedRecord, Encryption.bytesToKey(decryptedKey), EncryptionConstants.algorithm);
@@ -223,10 +205,8 @@ public class EncryptionTest {
         Key[] keys = Encryption.getKeys();
         RSAPublicKey pubKey = (RSAPublicKey) keys[0];
         RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keys[1];
-        Log.i("Encryption", "Symmetric key: " + Arrays.toString(key.getEncoded()));
         byte[] encrypted = Encryption.encrypt(pubKey, Arrays.toString(key.getEncoded()));
         byte[] decrypted = Encryption.decrypt(privKey, encrypted);
-        Log.i("Encryption", "Symmetric key: " + Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
         assertEquals(Arrays.toString(key.getEncoded()), Arrays.toString(Encryption.bytesFromString(new String(decrypted))));
     }
 
@@ -239,11 +219,6 @@ public class EncryptionTest {
         Key privKey = Encryption.encodedToPrivKey(privEnc);
         assertEquals(keys[0], pubKey);
         assertEquals(keys[1], privKey);
-        Log.i("Encryption", String.valueOf(keys[0].hashCode()));
-        Log.i("Encryption", String.valueOf(pubKey.hashCode()));
-        Log.i("Encryption", String.valueOf(keys[1].hashCode()));
-        Log.i("Encryption", String.valueOf(privKey.hashCode()));
-
     }
 
 }
