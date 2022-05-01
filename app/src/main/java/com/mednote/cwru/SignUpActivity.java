@@ -44,7 +44,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     String toastText = "Registration is " + getSignUpViewModel().getSignUpStatus();
                     Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
                     if (getSignUpViewModel().getSignUpStatus() == RegistrationStatus.registered) {
-                        Intent new_intent = new Intent(SignUpActivity.this, MainActivity.class);
+                        Intent new_intent = new Intent(SignUpActivity.this, WalletActivity.class);
+                        new_intent.putExtra("password",getSignUpViewModel().getPassword());
                         startActivity(new_intent);
                     }
                 }

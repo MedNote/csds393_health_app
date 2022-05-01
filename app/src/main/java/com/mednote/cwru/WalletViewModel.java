@@ -10,6 +10,7 @@ public class WalletViewModel extends BaseViewModel  {
     private String fname;
     private String lname;
     private String rsaKey;
+    private String mnemonic;
 
     public WalletViewModel() {
         walletId = "";
@@ -38,6 +39,11 @@ public class WalletViewModel extends BaseViewModel  {
         return rsaKey;
     }
 
+    @Bindable
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
     public void setWalletId(String walletId) {
         this.walletId = walletId;
         notifyPropertyChanged(BR.walletId);
@@ -58,4 +64,8 @@ public class WalletViewModel extends BaseViewModel  {
         notifyPropertyChanged(BR.rsaKey);
     }
 
+    public void setMnemonic(String mnemonic) {
+        this.mnemonic = mnemonic;
+        notifyPropertyChanged(BR.mnemonic);
+    }
 }
