@@ -1,28 +1,28 @@
-package com.mednote.cwru.login;
+package com.mednote.cwru.login.datasource;
 
 import android.util.Log;
 
 import com.mednote.cwru.ethereum.ContractInteraction;
 import com.mednote.cwru.ethereum.EHR;
 import com.mednote.cwru.ethereum.Utils;
+import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
+import com.mednote.cwru.login.exchangetypes.LoginServerResult;
+import com.mednote.cwru.login.exchangetypes.LogoutServerResponse;
+import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
+import com.mednote.cwru.login.exchangetypes.SignUpServerResult;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.Name;
 import com.mednote.cwru.serverapi.ServerResult;
-import com.mednote.cwru.util.Encryption;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
 
-import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-import java.io.IOException;
 import java.security.Key;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 public abstract class LoginDataSource {
     public LoginDataSource() {

@@ -14,7 +14,7 @@ public class UserViewModel extends BaseViewModel {
 
 
     public UserViewModel() {
-        uuid = UUID.randomUUID().toString();
+        uuid = ""; //UUID.randomUUID().toString();
         name = "Oleksii Fedorenko";
         dob = "2000/06/17";
     }

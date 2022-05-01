@@ -1,4 +1,4 @@
-package com.mednote.cwru.login;
+package com.mednote.cwru.login.exchangetypes;
 
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.Name;

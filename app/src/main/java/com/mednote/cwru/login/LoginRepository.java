@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
-import com.mednote.cwru.BR;
+import com.mednote.cwru.login.datasource.LoginDataSource;
+import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
+import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
 import com.mednote.cwru.login.models.LoggedInUser;
 import com.mednote.cwru.login.models.Name;

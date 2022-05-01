@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <data>
     <import type="android.view.View"/>
-    <variable name="viewmodel" type="com.mednote.cwru.LoginViewModel"/>
+    <variable name="viewmodel" type="com.mednote.cwru.login.LoginViewModel"/>
 </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -71,6 +71,7 @@
         android:id="@+id/checkBox"
         android:layout_width="100dp"
         android:layout_height="72dp"
+        android:checked="@={viewmodel.doctor}"
         android:text="Doctor?"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pw_tv" />
 
     <Button
-        android:id="@+id/proceed_to_verification_button"
+        android:id="@+id/editview"
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:background="@drawable/style_button_blue"

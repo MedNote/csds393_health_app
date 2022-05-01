@@ -1,5 +1,7 @@
 package com.mednote.cwru.login.models;
 
+import com.mednote.cwru.AppendRecordMutation;
+
 import java.io.Serializable;
 import java.util.List;
 
