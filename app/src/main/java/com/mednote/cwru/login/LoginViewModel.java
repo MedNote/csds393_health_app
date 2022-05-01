@@ -17,6 +17,9 @@ import com.mednote.cwru.login.datasource.PatientLoginDataSource;
 import com.mednote.cwru.login.datasource.ProviderLoginDataSource;
 import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.login.models.ClientUser;
+import com.mednote.cwru.login.models.LoggedInUser;
+import com.mednote.cwru.login.models.ProviderUser;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ExecutorServiceHelper;
@@ -126,7 +129,17 @@ public class LoginViewModel extends BaseViewModel {
         futureTask.addOnSuccessListener(new OnSuccessListener<ServerResult<LoginServerResponse>>() {
             @Override
             public void onSuccess(ServerResult<LoginServerResponse> loginServerResponseServerResult) {
-                if (loginServerResponseServerResult.getResult().getUserExists()) {
+                LoginServerResponse loginServerResponse = loginServerResponseServerResult.getResult();
+                if (loginServerResponse.getUserExists()) {
+                    if (loginServerResponse.getUserExists()) {
+                        LoggedInUser newUser = null;
+                        if (getDoctor()) {
+                            newUser = new ProviderUser(loginServerResponse.getAccountCredentials());
+                        } else {
+                            newUser = new ClientUser(loginServerResponse.getAccountCredentials());
+                        }
+                        loginRepository.setLoggedInUser(newUser);
+                    }
                     setLoginStatus(LoginStatus.logged_in);
                 } else {
                     setLoginStatus(LoginStatus.error);

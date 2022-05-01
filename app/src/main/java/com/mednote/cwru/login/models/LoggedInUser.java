@@ -9,7 +9,7 @@ import java.security.Key;
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
-public class LoggedInUser implements Serializable {
+public abstract class LoggedInUser implements Serializable {
 
     private AccountCredentials accountCredentials;
     private Key publicKey;

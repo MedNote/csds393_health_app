@@ -157,9 +157,9 @@ public class ServerInteractionViewModel extends BaseViewModel {
                                             } catch (IllegalAccessException e) {
                                                 e.printStackTrace();
                                             }
-                                            setKeyRequestStatus(DataRequestStatus.data_received);
+                                            setDataRequestStatus(DataRequestStatus.data_received);
                                         } else {
-                                            setKeyRequestStatus(DataRequestStatus.error);
+                                            setDataRequestStatus(DataRequestStatus.error);
                                         }
                                         Log.d("GraphQL", String.valueOf(dataApolloResponse.data));
                                     }

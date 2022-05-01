@@ -9,8 +9,10 @@ import com.mednote.cwru.login.datasource.LoginDataSource;
 import com.mednote.cwru.login.exchangetypes.LoginServerResponse;
 import com.mednote.cwru.login.exchangetypes.SignUpServerResponse;
 import com.mednote.cwru.login.models.AccountCredentials;
+import com.mednote.cwru.login.models.ClientUser;
 import com.mednote.cwru.login.models.LoggedInUser;
 import com.mednote.cwru.login.models.Name;
+import com.mednote.cwru.login.models.ProviderUser;
 import com.mednote.cwru.serverapi.ServerResult;
 import com.mednote.cwru.util.FutureTaskWrapper;
 import com.mednote.cwru.util.helpers.ApplicationContextHelper;
@@ -39,9 +41,7 @@ public class LoginRepository {
     }
 
     public static LoginRepository getInstance(LoginDataSource loginDataSource) {
-        if (instance == null) {
-            instance = new LoginRepository(loginDataSource);
-        }
+        instance = new LoginRepository(loginDataSource);
         return instance;
     }
 
@@ -57,7 +57,12 @@ public class LoginRepository {
             if (json.equals(""))
                 return null;
             Gson gson = new Gson();
-            user = gson.fromJson(json, LoggedInUser.class);
+            try {
+                user = gson.fromJson(json, ProviderUser.class);
+            } catch (RuntimeException e) {
+                user = gson.fromJson(json, ClientUser.class);
+                e.printStackTrace();
+            }
         }
         return user;
     }
@@ -70,7 +75,7 @@ public class LoginRepository {
         editor.remove("logged").apply();
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
+    public void setLoggedInUser(LoggedInUser user) {
         this.user = user;
         SharedPreferences.Editor editor = sp.edit();
         Gson gson = new Gson();
@@ -115,11 +120,10 @@ public class LoginRepository {
      * @return
      */
     public LoggedInUser onLoginResult(LoginServerResponse loginServerResponse) {
-        if (loginServerResponse.getUserExists()) {
-            LoggedInUser newUser = new LoggedInUser(loginServerResponse.getAccountCredentials());
-            // TODO: get symmetric key
-            setLoggedInUser(newUser);
-        }
+//        if (loginServerResponse.getUserExists()) {
+//            LoggedInUser newUser = new LoggedInUser(loginServerResponse.getAccountCredentials());
+//            setLoggedInUser(newUser);
+//        }
         return user;
     }
 }
