@@ -8,7 +8,7 @@ public class SignUpTest {
 
     private SignUpViewModel signUpViewModel = new SignUpViewModel();
 
-    @Test void VMConstruct(){
+    @Test public void VMConstruct(){
         assertEquals("", signUpViewModel.getFname());
         assertEquals("", signUpViewModel.getLname());
         assertEquals("", signUpViewModel.getDOB());
@@ -19,11 +19,11 @@ public class SignUpTest {
     public void testSetters(){
         signUpViewModel.setFname("First");
         assertEquals("First", signUpViewModel.getFname());
-        signUpViewModel.setFname("Last");
+        signUpViewModel.setLname("Last");
         assertEquals("Last", signUpViewModel.getLname());
-        signUpViewModel.setFname("password");
+        signUpViewModel.setPassword("password");
         assertEquals("password", signUpViewModel.getPassword());
-        signUpViewModel.setFname("01/01/2000");
+        signUpViewModel.setDOB("01/01/2000");
         assertEquals("01/01/2000", signUpViewModel.getDOB());
 
     }

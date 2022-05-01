@@ -98,27 +98,15 @@
 
     <Button
         android:id="@+id/go_to_add_record_btn"
-        android:layout_width="0dp"
+        android:layout_width="171dp"
         android:layout_height="74dp"
         android:layout_margin="16dp"
         android:text="Add Record"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/go_to_view_record_btn"
         app:layout_constraintTop_toBottomOf="@id/phone_tv" />
 
-    <Button
-        android:id="@+id/go_to_view_record_btn"
-        android:layout_width="0dp"
-        android:layout_height="74dp"
-        android:layout_margin="16dp"
-        android:text="View Record"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/go_to_add_record_btn"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phone_tv" />
 
     <Button
         android:id="@+id/proceed_to_verification_button"

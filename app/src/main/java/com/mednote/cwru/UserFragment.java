@@ -22,6 +22,7 @@ import com.mednote.cwru.databinding.UserFragmentBinding;
 import com.mednote.cwru.databinding.WearableFragmentBinding;
 import com.mednote.cwru.googlefit.WearableFragment;
 import com.mednote.cwru.login.LoginRepository;
+import com.mednote.cwru.login.models.ClientUser;
 import com.mednote.cwru.login.models.LoggedInUser;
 import com.mednote.cwru.serverapi.DataRequestStatus;
 import com.mednote.cwru.serverapi.ServerInteractionViewModel;
@@ -30,6 +31,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
 
     private UserViewModel mViewModel;
     private LoggedInUser loggedInUser;
+    private LoginRepository loginRepository;
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -56,13 +58,16 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         // To Doctor View Activity
         Button addBtn = (Button) getView().findViewById(R.id.go_to_add_record_btn);
         addBtn.setOnClickListener(this);
-        Button viewBtn = (Button) getView().findViewById(R.id.go_to_view_record_btn);
-        viewBtn.setOnClickListener(this);
         getView().findViewById(R.id.proceed_to_verification_button).setOnClickListener(this);
 
         // Updating UI
 
-        LoginRepository loginRepository = LoginRepository.getInstance(null);
+        loginRepository = LoginRepository.getInstance(null);
+        if (loginRepository.getLoggedInUser() instanceof ClientUser) {
+            addBtn.setText("View Record");
+        } else {
+            addBtn.setText("Add Record");
+        }
         getmViewModel().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
@@ -100,12 +105,13 @@ public class UserFragment extends Fragment implements View.OnClickListener {
           startActivity(new_intent);
       }
         if (viewClicked == R.id.go_to_add_record_btn) {
-            Intent intent = new Intent(getActivity(), DoctorNoteAddActivity.class);
-            startActivity(intent);
-        }
-        if (viewClicked == R.id.go_to_view_record_btn) {
-            Intent intent = new Intent(getActivity(), DoctorNoteViewActivity.class);
-            startActivity(intent);
+            if (loginRepository.getLoggedInUser() instanceof ClientUser) {
+                Intent intent = new Intent(getActivity(), DoctorNoteViewActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), DoctorNoteAddActivity.class);
+                startActivity(intent);
+            }
         }
     }
 }
