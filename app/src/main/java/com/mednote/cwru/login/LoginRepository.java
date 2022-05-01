@@ -57,14 +57,17 @@ public class LoginRepository {
             if (json.equals(""))
                 return null;
             Gson gson = new Gson();
-            try {
+            if (isDoctor()) {
                 user = gson.fromJson(json, ProviderUser.class);
-            } catch (RuntimeException e) {
+            } else {
                 user = gson.fromJson(json, ClientUser.class);
-                e.printStackTrace();
             }
         }
         return user;
+    }
+
+    public boolean isDoctor() {
+        return sp.getBoolean("doctor", false);
     }
 
     public void logout() {
@@ -82,6 +85,11 @@ public class LoginRepository {
         String json = gson.toJson(user);
         editor.putString("user", json).apply();
         editor.putBoolean("logged", true).apply();
+        if (user instanceof ClientUser) {
+            editor.putBoolean("doctor", false).apply();
+        } else {
+            editor.putBoolean("doctor", true).apply();
+        }
     }
 
     public void saveUser () {
